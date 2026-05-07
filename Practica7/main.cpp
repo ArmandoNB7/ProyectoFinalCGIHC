@@ -289,27 +289,64 @@ int main() {
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		Mi_lamparita.RenderModel();
 
-		// ESPACIO PARA SUS NUEVOS MODELOS AQUÍ ABAJO
-		// ...
 
 		// =========================================================
 		// ZONA 1: ALICIA EN EL PAÍS DE LAS MARAVILLAS (Esquina X+, Z+)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(15.0f, -1.0f, 15.0f));
+		model = glm::translate(model, glm::vec3(5.0f, -1.0f, 5.0f));
 		// model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); // Descomenta si necesitas hacerlos más grandes/chicos
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Casa_Alicia.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(25.0f, -1.0f, 15.0f));
+		model = glm::translate(model, glm::vec3(10.0f, -1.0f, 10.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Comedor_Alicia.RenderModel();
 
+
+		//SECCION HONGOS 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(15.0f, -1.0f, 25.0f));
+		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 100.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 150.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 200.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 250.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 100.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 150.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 200.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 250.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Hongo.RenderModel();
+
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(20.0f, -1.0f, 20.0f));
@@ -325,48 +362,62 @@ int main() {
 		// ZONA 2: MACHINARIUM / STEAMPUNK (Esquina X-, Z-)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-15.0f, -1.0f, -15.0f));
-		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Reloj.RenderModel();
 
 		model = glm::mat4(1.0);
 		// El engranaje y reloj principal los pongo cerca de la torre
-		model = glm::translate(model, glm::vec3(-20.0f, -1.0f, -15.0f));
-		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 1.5f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Gear1.RenderModel();
 		
 	
+		//Engranajes pequenos decorativos 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-15.0f, -1.0f, -25.0f));
+		model = glm::translate(model, glm::vec3(250.0f, -1.0f, 250.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Engranajes.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-15.0f, -1.0f, -25.0f));
+		model = glm::translate(model, glm::vec3(-250.0f, -1.0f, 250.0f));
+		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Engranajes.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-250.0f, -1.0f, 250.0f));
+		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Engranajes.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 3.0f, -1.0f));
+		model = glm::scale(model, glm::vec3(11.0f, 11.0f, 11.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Reloj_Principal.RenderModel();
 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-15.0f, -1.0f, -25.0f));
+		model = glm::translate(model, glm::vec3(30.0f, -1.0f, 30.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-25.0f, -1.0f, -25.0f));
+		model = glm::translate(model, glm::vec3(35.0f, -1.0f, 35.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LightHouse.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-5.0f, -1.0f, -20.0f));
+		model = glm::translate(model, glm::vec3(40.0f, -1.0f, 40.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Tuberias.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -10.0f));
+		model = glm::translate(model, glm::vec3(45.0f, -1.0f, 45.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Pilares.RenderModel();
 		//YA arregle 
@@ -374,18 +425,19 @@ int main() {
 		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-20.0f, -1.0f, 20.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, glm::vec3(150.0f, -2.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(0.6f, 0.6f, 0.6f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Pico_Helado.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-5.0f, -1.0f, 5.0f)); // La banca cerquita del centro
+		model = glm::translate(model, glm::vec3(55.0f, -1.0f, 55.0f)); // La banca cerquita del centro
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Banca.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(15.0f, -1.0f, 25.0f)); // La banca cerquita del centro
+		model = glm::translate(model, glm::vec3(-150.0f, -1.0f, 100.0f)); 
+		model = glm::scale(model, glm::vec3(5.0f, 6.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Sombrero.RenderModel();
 
