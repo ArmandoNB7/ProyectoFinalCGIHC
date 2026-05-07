@@ -47,6 +47,7 @@ Texture pisoTexture;
 
 // Modelos Base
 Model Mi_lamparita;
+Model Pasto;
 // === MODELOS DEL PROYECTO FINAL ===
 // Alicia
 Model Casa_Alicia, Comedor_Alicia, Puerta_Alicia, Taza_Alicia, Hongo, Sombrero;
@@ -159,6 +160,7 @@ int main() {
 	Torre_Agua = Model();      Torre_Agua.LoadModel("ModelosProject/torre_agua.obj");
 	LightHouse = Model();      LightHouse.LoadModel("ModelosProject/light_house.obj");
 	Pilares = Model();         Pilares.LoadModel("ModelosProject/pilares.obj");
+	Pasto = Model();           Pasto.LoadModel("ModelosProject/pasto.obj");
 
 	// Temática Hora de Aventura & Extras
 	Pico_Helado = Model();     Pico_Helado.LoadModel("ModelosProject/PicoHelado.obj");
@@ -200,6 +202,13 @@ int main() {
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 
+	//Rotacion y movimiento del sombrero de copa
+
+	float movSombrero = 0.0f;
+	float rotSombrero = 0.0f;
+
+
+
 	// BUCLE PRINCIPAL
 	while (!mainWindow.getShouldClose()) {
 		GLfloat now = glfwGetTime();
@@ -236,6 +245,46 @@ int main() {
 			
 			pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 		}
+
+		//ANIMACIONES BASICAS
+		
+
+		float tiempoCiclo = fmod(glfwGetTime(), 4.0f);
+		float movSombrero = 0.0f;
+		float rotSombrero = 0.0f;
+
+		if (tiempoCiclo < 1.0f) {
+			float progreso = tiempoCiclo;
+			movSombrero = progreso * 15.0f;
+			rotSombrero = 0.0f;
+		}
+		else if (tiempoCiclo < 2.0f) {
+			float progreso = tiempoCiclo - 1.0f;
+			movSombrero = 15.0f;
+			rotSombrero = progreso * 85.0f;
+		}
+		else if (tiempoCiclo < 3.0f) {
+			float progreso = tiempoCiclo - 2.0f;
+			movSombrero = 15.0f;
+			rotSombrero = 85.0f - (progreso * 85.0f);
+		}
+		else {
+			float progreso = tiempoCiclo - 3.0f;
+			movSombrero = 15.0f - (progreso * 15.0f);
+			rotSombrero = 0.0f;
+		}
+
+		
+
+		//ANIMACIONES COMPLEJAS 
+
+
+
+
+
+
+
+
 
 		// =======================================================
 		// RENDERIZADO
@@ -284,7 +333,7 @@ int main() {
 		// 2. DIBUJAR FAROLA
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posFarola);
-		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		Mi_lamparita.RenderModel();
@@ -347,6 +396,39 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Hongo.RenderModel();
 
+		//pasto entrada
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 150.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Pasto.RenderModel();
+
+		//pasto derecha
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(150.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Pasto.RenderModel();
+
+
+		//pasto izquierda
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-150.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Pasto.RenderModel();
+
+
+		//pasto trasero
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -150.0f));
+		model = glm::rotate(model, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Pasto.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(20.0f, -1.0f, 20.0f));
@@ -378,18 +460,18 @@ int main() {
 		//Engranajes pequenos decorativos 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(250.0f, -1.0f, 250.0f));
+		model = glm::translate(model, glm::vec3(200.0f, 1.0f, 150.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Engranajes.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-250.0f, -1.0f, 250.0f));
-		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
+		model = glm::translate(model, glm::vec3(200.0f, 7.0f, -200.0f));
+		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Engranajes.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-250.0f, -1.0f, 250.0f));
+		model = glm::translate(model, glm::vec3(-200.0f, 7.0f, 200.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Engranajes.RenderModel();
@@ -402,31 +484,58 @@ int main() {
 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(30.0f, -1.0f, 30.0f));
+		model = glm::translate(model, glm::vec3(120.0f, -1.0f, -120.0f));
+		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
 
+		//Faro
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(35.0f, -1.0f, 35.0f));
+		model = glm::translate(model, glm::vec3(-235.0f, -1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		LightHouse.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(40.0f, -1.0f, 40.0f));
+		model = glm::translate(model, glm::vec3(100.0f, -1.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Tuberias.RenderModel();
-
+		//Pilar Dderecho
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(45.0f, -1.0f, 45.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		Pilares.RenderModel();
+
+		//Pilar izquierdo
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-45.0f, -1.0f, 45.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		Pilares.RenderModel();
+		//Pilar TRASERO IZQ
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-45.0f, -1.0f, -45.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		Pilares.RenderModel();
+		//PILAR TRASERO DERECHO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(45.0f, -1.0f, -45.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+		Pilares.RenderModel();
+
+
+
 		//YA arregle 
 		// =========================================================
 		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(150.0f, -2.0f, 100.0f));
-		model = glm::scale(model, glm::vec3(0.6f, 0.6f, 0.6f));
+		model = glm::translate(model, glm::vec3(150.0f, -3.0f, 100.0f));
+		model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.9f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Pico_Helado.RenderModel();
 
@@ -435,9 +544,13 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Banca.RenderModel();
 
+
+		//sombrero
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-150.0f, -1.0f, 100.0f)); 
-		model = glm::scale(model, glm::vec3(5.0f, 6.0f, 5.0f));
+		model = glm::translate(model, glm::vec3(-150.0f, -1.0f + movSombrero + 15.0f, -100.0f));
+		model = glm::rotate(model, glm::radians(rotSombrero), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(7.0f, 7.0f, 7.0f));
+
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Sombrero.RenderModel();
 
