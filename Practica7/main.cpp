@@ -326,15 +326,17 @@ int main() {
 		// =========================================================
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-15.0f, -1.0f, -15.0f));
+		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Reloj.RenderModel();
 
 		model = glm::mat4(1.0);
 		// El engranaje y reloj principal los pongo cerca de la torre
 		model = glm::translate(model, glm::vec3(-20.0f, -1.0f, -15.0f));
-		model = glm::scale(model, glm::vec3(5.0f, 2.0f, 5.0f));
-		Gear1.RenderModel();
+		model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Gear1.RenderModel();
+		
 	
 
 		model = glm::mat4(1.0);
@@ -367,7 +369,7 @@ int main() {
 		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -10.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Pilares.RenderModel();
-
+		//YA arregle 
 		// =========================================================
 		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
 		// =========================================================
