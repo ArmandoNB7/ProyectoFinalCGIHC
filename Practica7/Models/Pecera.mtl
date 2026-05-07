@@ -1,0 +1,152 @@
+# Blender 5.0.1 MTL File: 'Pecerav2.blend'
+# www.blender.org
+
+newmtl 12987_saltwater_aquarium_glass
+Ns 66.000008
+Ka 1.000000 1.000000 1.000000
+Kd 0.545100 0.760800 1.000000
+Ks 0.630000 0.630000 0.630000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.050000
+illum 9
+
+newmtl 12987_saltwater_aquarium_glass_2
+Ns 16.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.588200 0.588200 0.588200
+Ks 0.360000 0.360000 0.360000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.500000
+illum 9
+
+newmtl 12987_saltwater_aquarium_glass_5
+Ns 66.000008
+Ka 1.000000 1.000000 1.000000
+Kd 0.592200 0.678400 0.654900
+Ks 0.630000 0.630000 0.630000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.050000
+illum 9
+
+newmtl 12987_saltwater_aquarium_plastic_1
+Ns 27.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.098000 0.098000 0.098000
+Ks 0.594000 0.594000 0.594000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl 12987_saltwater_aquarium_rock_1
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_1_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_2
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_3_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_3
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_2_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_4
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_4_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_5
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_5_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_6
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_6_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rock_7
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_rock_7_diff.jpg
+
+newmtl 12987_saltwater_aquarium_rubber
+Ns 3.999998
+Ka 1.000000 1.000000 1.000000
+Kd 0.113700 0.113700 0.113700
+Ks 0.261000 0.261000 0.261000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl 12987_saltwater_aquarium_sand
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_sand_diff.jpg
+
+newmtl 12987_saltwater_aquarium_stone
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.090000 0.090000 0.090000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd 12987_saltwater_aquarium_stone_diff.jpg
+
+newmtl Pecera_Texture
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 0.401786
+illum 9
+map_Kd textura_pecera.png

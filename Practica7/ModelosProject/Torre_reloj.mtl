@@ -1,0 +1,95 @@
+# Blender 5.0.1 MTL File: 'uploads_files_4196744_Chicago_Water_Tower.blend'
+# www.blender.org
+
+newmtl Copper_Patina
+Ka 1.000000 1.000000 1.000000
+Kd 0.043735 0.031896 0.025187
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Ns green_metal_rust_rough_4k.jpg
+map_Bump -bm 1.000000 green_metal_rust_nor_gl_4k.exr
+
+newmtl CregierPlaque
+Ns 831.965698
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 1
+map_Kd CregierPlaque.png
+map_d CregierPlaque.png
+
+newmtl Cupola_Siding
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.053948 0.034963 0.024766
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Glass
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Joliet_Limestone_Bricks
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 2 2 2 medieval_blocks_03_diff_4k.jpg
+map_Ns -s 2 2 2 medieval_blocks_03_rough_4k.jpg
+map_Bump -s 2 2 2 -bm 1.000000 medieval_blocks_03_nor_gl_4k.exr
+
+newmtl Joliet_Limestone_Straight
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 3 3 3 ukfpacjcw_4K_Albedo.jpg
+map_Ns -s 3 3 3 medieval_blocks_03_rough_4k.jpg
+map_Bump -s 3 3 3 -bm 1.000000 medieval_blocks_03_nor_gl_4k.exr
+
+newmtl Painted_Wood
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.690025 0.651085 0.510206
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Roof
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.072141 0.072141 0.072141
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Stained_Concrete_ukfpacjcw
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd ukfpacjcw_4K_Albedo.jpg
+map_Ks ukfpacjcw_4K_Roughness.jpg
