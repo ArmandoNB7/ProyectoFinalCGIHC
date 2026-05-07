@@ -198,6 +198,16 @@ int main() {
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 5.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 	pointLightCount++;
 
+	// 4. Luz del Faro (PointLight 1)
+	// PointLight(R, G, B, Ambiental, Difusa, X, Y, Z, Constante, Lineal, Exponencial)
+	pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
+		0.2f,   // Ambiental: Muy tenue para no de día el mapa
+		2.0f,   // Difusa: Bajamos el fogonazo
+		-235.0f, 50.0f, 0.0f, // <-- ¡LA CLAVE! La subimos a 50.0f
+		1.0f, 0.001f, 0.00005f);
+	pointLightCount++;
+
+
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0, uniformSpecularIntensity = 0, uniformShininess = 0;
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
@@ -489,7 +499,9 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
 
-		//Faro
+		// =========================================================
+		// Faro
+		// =========================================================
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-235.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
