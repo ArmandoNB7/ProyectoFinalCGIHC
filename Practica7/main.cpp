@@ -51,6 +51,7 @@ Model Pasto;
 // === MODELOS DEL PROYECTO FINAL ===
 // Alicia
 Model Casa_Alicia, Comedor_Alicia, Puerta_Alicia, Taza_Alicia, Hongo, Sombrero;
+Model Mesa_Alicia;
 // Machinarium / Steampunk
 Model Torre_Reloj, Reloj_Principal, Engranajes, Gear1, Tuberias, Torre_Agua, LightHouse, Pilares;
 // Hora de Aventura & Extras
@@ -199,6 +200,7 @@ int main() {
 	Taza_Alicia = Model();     Taza_Alicia.LoadModel("ModelosProject/Taza_alicia.obj");
 	Hongo = Model();           Hongo.LoadModel("ModelosProject/hongo.obj");
 	Sombrero = Model();		   Sombrero.LoadModel("ModelosProject/sombrero.obj");
+	Mesa_Alicia = Model();         Mesa_Alicia.LoadModel("ModelosProject/comedor.obj");
 	//hongo que brilla
 	hongo1 = Model();
 	hongo1.LoadModel("ModelosProject/hongo1.obj");
@@ -288,10 +290,10 @@ int main() {
 
 	// 4. Luz del Faro (PointLight 1)
 	pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
-		0.0f,   // AMBIENTAL en 0.0f: Ya no iluminará mágicamente las espaldas de los modelos.
-		0.5f,   // DIFUSA en 0.5f: Un fogonazo súper débil (antes estaba en 2.0 y 10.0).
+		0.2f,   // AMBIENTAL en 0.0f: Ya no iluminará mágicamente las espaldas de los modelos.
+		1.5f,   // DIFUSA en 0.5f: Un fogonazo súper débil (antes estaba en 2.0 y 10.0).
 		-235.0f, 50.0f, 0.0f,
-		1.0f, 0.005f, 0.0002f); // ATENUACIÓN: Aumenté estos dos últimos números para que el radio de la luz sea mucho más corto.
+		1.0f, 0.001f, 0.002f); // ATENUACIÓN: Aumenté estos dos últimos números para que el radio de la luz sea mucho más corto.
 	pointLightCount++;
 
 	// Luz de la lampara (itzel)
@@ -319,6 +321,12 @@ int main() {
 	float movSombrero = 0.0f;
 	float rotSombrero = 0.0f;
 
+	//// Variables para la animación del Engranaje (Gear1)
+	bool animacionGearActiva = false;
+	bool teclaGPresionada = false;
+	float rotGearActual = 0.0f;
+	float rotGearObjetivo = 0.0f;
+	float tiempoUltimoPaso = 0.0f;
 
 
 	// BUCLE PRINCIPAL
@@ -330,7 +338,7 @@ int main() {
 
 		//AQUI VOY A PONER LO RELACIONADO CON VARIABLES DE LAS ANIMACIONES
 		///PARA EL HONGO QUE BRILLA
-		glm::vec3 posHongo = glm::vec3(-5.0f, -0.5f, 2.0f);
+		glm::vec3 posHongo = glm::vec3(60.0f, -0.5f, 150.0f);
 		pointLights[2].SetPos(glm::vec3(posHongo.x, posHongo.y + 0.5f, posHongo.z));
 
 		//PARA LA TETERA
@@ -358,8 +366,8 @@ int main() {
 		////////////////////////////////////////////
 		caminando = false;
 		//se ajusta la velocidad
-		float velocidadCaminar = 0.05f * deltaTime;
-		float velocidadGiro = 1.0f * deltaTime;
+		float velocidadCaminar = 0.5f * deltaTime;
+		float velocidadGiro = 1.2f * deltaTime;
 		// Flecha ARRIBA: Avanzar
 		if (mainWindow.getsKeys()[GLFW_KEY_UP]) {
 			posRobotX += sin(giroRobot * toRadians) * velocidadCaminar;
@@ -421,9 +429,49 @@ int main() {
 			pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 		}
 
-		//ANIMACIONES BASICAS
+		//ANIMACIONES BASICAS:
+		
 		
 
+		/// =======================================================
+		// Control del Engranaje (Tecla G)
+		// =======================================================
+		if (mainWindow.getsKeys()[GLFW_KEY_G]) {
+			if (!teclaGPresionada) {
+				animacionGearActiva = !animacionGearActiva; // Activa/Desactiva
+
+				// ¡EL TRUCO! Sincronizamos el reloj exactamente al momento de encenderlo
+				// para que no intente dar giros acumulados del pasado.
+				if (animacionGearActiva) {
+					tiempoUltimoPaso = now;
+				}
+
+				teclaGPresionada = true;
+			}
+		}
+		else {
+			teclaGPresionada = false;
+		}
+
+		// Lógica del "Tick" Mecánico
+		if (animacionGearActiva) {
+			// Intervalo exacto de 1.0 segundo de espera
+			if (now - tiempoUltimoPaso > 1.0f) {
+				rotGearObjetivo += 30.0f; // Avanza 30 grados en cada tick
+				tiempoUltimoPaso = now;   // Reiniciamos el reloj para el siguiente segundo
+			}
+		}
+
+		// El multiplicador en 2.0f hace que el movimiento sea súper pesado, lento y robusto
+		rotGearActual += (rotGearObjetivo - rotGearActual) * 2.0f * deltaTime;
+		
+
+		
+
+		//ANIMACIONES COMPLEJAS:
+		// 
+		// 
+		//Animacion SOMBRERO
 		float tiempoCiclo = fmod(glfwGetTime(), 4.0f);
 		float movSombrero = 0.0f;
 		float rotSombrero = 0.0f;
@@ -448,10 +496,6 @@ int main() {
 			movSombrero = 15.0f - (progreso * 15.0f);
 			rotSombrero = 0.0f;
 		}
-
-		
-
-		//ANIMACIONES COMPLEJAS 
 		//ANIMACION COMPLEJA DEL HONGO QUE BRILLA
 		intensidadHongo = 1.5f + sin(glfwGetTime() * 3.0f);
 		pointLights[3].SetDiffuseIntensity(intensidadHongo);
@@ -484,7 +528,7 @@ int main() {
 
 		//ANIMACION COMPLEJA PARA EL ZEPPELIN
 		float tiempoZep = glfwGetTime() * 0.3f;
-		float radioZep = 60.0f; // Qué tan grande es el círculo
+		float radioZep = 200.0f; // Qué tan grande es el círculo
 		movZepX = radioZep * sin(tiempoZep);
 		movZepZ = radioZep * cos(tiempoZep);
 		anguloZep = atan2(sin(tiempoZep), cos(tiempoZep)) * (180.0f / 3.14159f);
@@ -561,10 +605,6 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Casa_Alicia.RenderModel();
 
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(10.0f, -1.0f, 10.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Comedor_Alicia.RenderModel();
 
 
 		//SECCION HONGOS 
@@ -657,7 +697,7 @@ int main() {
 		// ZONA 2: MACHINARIUM / STEAMPUNK (Esquina X-, Z-)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Reloj.RenderModel();
@@ -665,7 +705,18 @@ int main() {
 		model = glm::mat4(1.0);
 		// El engranaje y reloj principal los pongo cerca de la torre
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(3.0f, 1.5f, 3.0f));
+		// APLICAMOS LA ROTACIÓN EN EL EJE Y
+		model = glm::rotate(model, glm::radians(rotGearActual), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Gear1.RenderModel();
+
+		model = glm::mat4(1.0);
+		// El engranaje y reloj principal los pongo cerca de la torre
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -110.0f));
+		// APLICAMOS LA ROTACIÓN EN EL EJE Y
+		model = glm::rotate(model, glm::radians(rotGearActual), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Gear1.RenderModel();
 		
@@ -684,8 +735,8 @@ int main() {
 		Engranajes.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-200.0f, 7.0f, 200.0f));
-		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
+		model = glm::translate(model, glm::vec3(200.0f, 7.0f, 220.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 8.0f, 4.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Engranajes.RenderModel();
 
@@ -749,7 +800,7 @@ int main() {
 		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
 		// =========================================================
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(150.0f, -3.0f, 100.0f));
+		model = glm::translate(model, glm::vec3(150.0f, -5.0f, 100.0f));
 		model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.9f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Pico_Helado.RenderModel();
@@ -776,7 +827,7 @@ int main() {
 		
 		//base
 		glm::mat4 modelRobotBase = glm::mat4(1.0);
-		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX, 0.0f, posRobotZ));
+		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX+0.0f, 3.0f, posRobotZ+230.0f));
 		modelRobotBase = glm::rotate(modelRobotBase, giroRobot * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelRobotBase = glm::scale(modelRobotBase, glm::vec3(10.0f, 10.0f, 10.0f));
 		// cuerpo
@@ -812,9 +863,9 @@ int main() {
 		// FINN
 		//////////////////////////////////////////
 		glm::mat4 modelFinnBase = glm::mat4(1.0f);
-		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(100.0f, 0.6f, 30.0f));
+		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-100.0f, 2.0f, 60.0f));
 		modelFinnBase = glm::rotate(modelFinnBase, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(2.0f, 2.0f, 2.0f));
 		// cuerpo
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelFinnBase));
 		cuerpoFinn.RenderModel();
@@ -844,7 +895,7 @@ int main() {
 		//////////////////////////////////////////////
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posHongo);
-		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
 		if (intensidadHongo > 0.1f) {
 			color = glm::vec3(1.0f, 0.5f, 1.0f);
 		}
@@ -862,8 +913,8 @@ int main() {
 		///////////////////////////////////////////////////
 		//plato
 		glm::mat4 modelPlato = glm::mat4(1.0f);
-		modelPlato = glm::translate(modelPlato, glm::vec3(35.0f, -0.1f, 120.0f));
-		modelPlato = glm::scale(modelPlato, glm::vec3(25.0f, 25.0f, 25.0f));
+		modelPlato = glm::translate(modelPlato, glm::vec3(-145.0f, 12.0f, 105.0f));
+		modelPlato = glm::scale(modelPlato, glm::vec3(15.0f, 15.0f, 15.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelPlato));
 		plato.RenderModel();
 		//tazas
@@ -880,6 +931,13 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		tetera.RenderModel();
 
+		//COMEDOR ALICIA
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-155.0f, 0.0f, 120.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Mesa_Alicia.RenderModel();
+
 
 		/////////////////////////////////////////////////7
 		// NPC MACHINARIUM
@@ -887,7 +945,7 @@ int main() {
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(40.0f, -1.0f, -120.0f));
 		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		npcMachinarium.RenderModel();
@@ -897,7 +955,7 @@ int main() {
 		// NPC BMO
 		///////////////////////////////////////////////////////////
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(-4.0f, -0.8f, -7.5f));
+		model = glm::translate(model, glm::vec3(40.0f, 1.0f, 75.0f));
 		model = glm::rotate(model, -30.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -909,9 +967,9 @@ int main() {
 		////////////////////////////////////////////////////////////
 		glm::mat4 modelZep = glm::mat4(1.0f);
 		// Usamos las variables que calculamos con el seno y coseno
-		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY + 20.0f, movZepZ));
+		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY + 105.0f, movZepZ));
 		modelZep = glm::rotate(modelZep, anguloZep * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		modelZep = glm::scale(modelZep, glm::vec3(3.5f, 3.5f, 3.5f));
+		modelZep = glm::scale(modelZep, glm::vec3(4.0f, 4.0f, 4.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelZep));
 		zeppelin.RenderModel();
 		//aspas
