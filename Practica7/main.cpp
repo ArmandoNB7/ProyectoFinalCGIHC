@@ -287,23 +287,22 @@ int main() {
 	pointLightCount++;
 
 	// 4. Luz del Faro (PointLight 1)
-	// PointLight(R, G, B, Ambiental, Difusa, X, Y, Z, Constante, Lineal, Exponencial)
 	pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
-		0.2f,   // Ambiental: Muy tenue para no de día el mapa
-		2.0f,   // Difusa: Bajamos el fogonazo
-		-235.0f, 50.0f, 0.0f, // <-- ¡LA CLAVE! La subimos a 50.0f
-		1.0f, 0.001f, 0.00005f);
+		0.0f,   // AMBIENTAL en 0.0f: Ya no iluminará mágicamente las espaldas de los modelos.
+		0.5f,   // DIFUSA en 0.5f: Un fogonazo súper débil (antes estaba en 2.0 y 10.0).
+		-235.0f, 50.0f, 0.0f,
+		1.0f, 0.005f, 0.0002f); // ATENUACIÓN: Aumenté estos dos últimos números para que el radio de la luz sea mucho más corto.
 	pointLightCount++;
 
 	// Luz de la lampara (itzel)
-	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
 		0.3f, 2.0f,
 		12.0f, 2.0f, 4.0f,
 		0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 
 	//luz del hongo
-	pointLights[2] = PointLight(0.8f, 0.0f, 1.0f,
+	pointLights[3] = PointLight(0.8f, 0.0f, 1.0f,
 		0.2f, 1.0f,       // Intensidad ambiental y difusa
 		-5.0f, 1.0f, 2.0f, // Posición (ajustar dependiendo de donde se poga el hongo en el main oficial)
 		0.3f, 0.2f, 0.1f); // Atenuación
@@ -455,7 +454,7 @@ int main() {
 		//ANIMACIONES COMPLEJAS 
 		//ANIMACION COMPLEJA DEL HONGO QUE BRILLA
 		intensidadHongo = 1.5f + sin(glfwGetTime() * 3.0f);
-		pointLights[2].SetDiffuseIntensity(intensidadHongo);
+		pointLights[3].SetDiffuseIntensity(intensidadHongo);
 
 		//ANIMACION COMPLEJA DE LA TETERA QUE SIRVA
 		float tiempoTotal = glfwGetTime();
@@ -779,6 +778,7 @@ int main() {
 		glm::mat4 modelRobotBase = glm::mat4(1.0);
 		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX, 0.0f, posRobotZ));
 		modelRobotBase = glm::rotate(modelRobotBase, giroRobot * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelRobotBase = glm::scale(modelRobotBase, glm::vec3(10.0f, 10.0f, 10.0f));
 		// cuerpo
 		model = modelRobotBase;
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -793,7 +793,6 @@ int main() {
 		modelaux = modelRobotBase;
 		modelaux = glm::translate(modelaux, glm::vec3(0.25f, 0.4f, 0.0f));
 		modelaux = glm::rotate(modelaux, -oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		brazo.RenderModel();
 		// pierna izq
@@ -806,7 +805,6 @@ int main() {
 		modelaux = modelRobotBase;
 		modelaux = glm::translate(modelaux, glm::vec3(0.1f, -0.33f, -0.03f));
 		modelaux = glm::rotate(modelaux, oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		pierna.RenderModel();
 
@@ -814,9 +812,9 @@ int main() {
 		// FINN
 		//////////////////////////////////////////
 		glm::mat4 modelFinnBase = glm::mat4(1.0f);
-		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-5.0f, 0.6f, -8.0f));
+		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(100.0f, 0.6f, 30.0f));
 		modelFinnBase = glm::rotate(modelFinnBase, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(0.3f, 0.3f, 0.3f));
+		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(1.0f, 1.0f, 1.0f));
 		// cuerpo
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelFinnBase));
 		cuerpoFinn.RenderModel();
@@ -828,7 +826,6 @@ int main() {
 		// brazo derecho
 		modelaux = modelFinnBase;
 		modelaux = glm::translate(modelaux, glm::vec3(-0.7f, 3.0f, 0.0f));
-		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		brazoFinn.RenderModel();
 		// pie derecho
@@ -847,7 +844,7 @@ int main() {
 		//////////////////////////////////////////////
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posHongo);
-		model = glm::scale(model, glm::vec3(2.5f, 3.5f, 2.5f));
+		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		if (intensidadHongo > 0.1f) {
 			color = glm::vec3(1.0f, 0.5f, 1.0f);
 		}
@@ -865,8 +862,8 @@ int main() {
 		///////////////////////////////////////////////////
 		//plato
 		glm::mat4 modelPlato = glm::mat4(1.0f);
-		modelPlato = glm::translate(modelPlato, glm::vec3(2.0f, -0.9f, 0.0f));
-		modelPlato = glm::scale(modelPlato, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelPlato = glm::translate(modelPlato, glm::vec3(35.0f, -0.1f, 120.0f));
+		modelPlato = glm::scale(modelPlato, glm::vec3(25.0f, 25.0f, 25.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelPlato));
 		plato.RenderModel();
 		//tazas
@@ -888,9 +885,9 @@ int main() {
 		// NPC MACHINARIUM
 		////////////////////////////////////////////
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -5.0f));
+		model = glm::translate(model, glm::vec3(40.0f, -1.0f, -120.0f));
 		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.08f, 0.08f, 0.08f));
+		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		npcMachinarium.RenderModel();
@@ -902,7 +899,7 @@ int main() {
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-4.0f, -0.8f, -7.5f));
 		model = glm::rotate(model, -30.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		bmo.RenderModel();
@@ -912,9 +909,9 @@ int main() {
 		////////////////////////////////////////////////////////////
 		glm::mat4 modelZep = glm::mat4(1.0f);
 		// Usamos las variables que calculamos con el seno y coseno
-		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY, movZepZ));
+		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY + 20.0f, movZepZ));
 		modelZep = glm::rotate(modelZep, anguloZep * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		modelZep = glm::scale(modelZep, glm::vec3(1.0f, 1.0f, 1.0f));
+		modelZep = glm::scale(modelZep, glm::vec3(3.5f, 3.5f, 3.5f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelZep));
 		zeppelin.RenderModel();
 		//aspas
