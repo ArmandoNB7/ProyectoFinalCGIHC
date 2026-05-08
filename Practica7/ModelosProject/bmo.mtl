@@ -1,0 +1,84 @@
+# Blender 5.0.1 MTL File: 'None'
+# www.blender.org
+
+newmtl Botones
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Botones_Base_color.png
+map_Ns Botones_Roughness.png
+
+newmtl Brazos_y_piernas
+Ka 0.069542 0.069542 0.069542
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Brazos y piernas_Base_color.png
+map_Ns Brazos y piernas_Roughness.png
+
+newmtl Cara
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.023651 0.023651 0.023651
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl Chasis
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Chasis_Base_color.png
+map_Ns Chasis_Roughness.png
+
+newmtl Cristal
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd Cristal_Base_color.png
+map_Ns Cristal_Roughness.png
+map_refl Cristal_Metallic.png
+map_d Cristal_Opacity.png
+
+newmtl Pantalla
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Pantalla_Base_color.png
+map_Ns Pantalla_Roughness.png
+map_Ke Pantalla_Emissive.png
+
+newmtl Pines
+Ka 0.313636 0.313636 0.313636
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Pines_Base_color.png
+map_Ns Pines_Roughness.png
+
+newmtl Tornillos
+Ka 0.313636 0.313636 0.313636
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd Tornillos_Base_color.png
+map_Ns Tornillos_Roughness.png
+map_refl Tornillos_Metallic.png

@@ -1,0 +1,12 @@
+# Blender 5.0.1 MTL File: 'Sketchfab_2018_03_07_12_53_15.blend'
+# www.blender.org
+
+newmtl mushroom.001
+Ns 584.775085
+Ka 0.010294 0.010294 0.010294
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd mushroom_diffuse.png

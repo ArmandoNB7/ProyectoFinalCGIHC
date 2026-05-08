@@ -55,6 +55,29 @@ Model Casa_Alicia, Comedor_Alicia, Puerta_Alicia, Taza_Alicia, Hongo, Sombrero;
 Model Torre_Reloj, Reloj_Principal, Engranajes, Gear1, Tuberias, Torre_Agua, LightHouse, Pilares;
 // Hora de Aventura & Extras
 Model Pico_Helado, Banca;
+//josef machinarium
+Model cuerpo;
+Model brazo;
+Model pierna;
+//finn
+Model cuerpoFinn;
+Model brazoFinn;
+Model pieIzqFinn;
+Model pieDerFinn;
+//hongo que brilla
+Model hongo1;
+//tetera
+Model plato;
+Model taza;
+Model tetera;
+//personaje npc de mach
+Model npcMachinarium;
+//npc de bmo
+Model bmo;
+//zeppelin
+Model zeppelin;
+Model aspas;
+
 
 Skybox skybox;
 
@@ -64,6 +87,32 @@ Material Material_opaco;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 static double limitFPS = 1.0 / 60.0;
+
+//MOVIMIENTOS DE JOSEF
+// Posición y rotación 
+float posRobotX = 0.0f;
+float posRobotZ = 0.0f;
+float giroRobot = 0.0f;
+// Animación de extremidades
+float oscilacion = 0.0f;
+float velocidadAnimacion = 20.0f;//movimiento del brazo, rapidez
+float amplitudArticulacion = 30.0f; // Máximo ángulo de rotación 
+bool caminando = false;
+
+//PARA LA LUZ DEL HONGUITO QUE BRILLA
+float intensidadHongo = 1.0f;
+bool hongoPrendido = true;
+
+//PARA LA TETERA
+float inclinacionTetera = 0.0f;
+
+//PARA EL ZEPPELIN
+float rotZeppelin = 0.0f;
+float rotAspas = 0.0f;
+
+
+
+
 
 // Luces
 DirectionalLight mainLight;
@@ -150,6 +199,16 @@ int main() {
 	Taza_Alicia = Model();     Taza_Alicia.LoadModel("ModelosProject/Taza_alicia.obj");
 	Hongo = Model();           Hongo.LoadModel("ModelosProject/hongo.obj");
 	Sombrero = Model();		   Sombrero.LoadModel("ModelosProject/sombrero.obj");
+	//hongo que brilla
+	hongo1 = Model();
+	hongo1.LoadModel("ModelosProject/hongo1.obj");
+	//tetera
+	plato = Model();
+	plato.LoadModel("ModelosProject/plato.obj");
+	taza = Model();
+	taza.LoadModel("ModelosProject/taza.obj");
+	tetera = Model();
+	tetera.LoadModel("ModelosProject/tetera.obj");
 
 	// Temática Steampunk / Machinarium
 	Torre_Reloj = Model();     Torre_Reloj.LoadModel("ModelosProject/Torre_reloj.obj");
@@ -161,10 +220,39 @@ int main() {
 	LightHouse = Model();      LightHouse.LoadModel("ModelosProject/light_house.obj");
 	Pilares = Model();         Pilares.LoadModel("ModelosProject/pilares.obj");
 	Pasto = Model();           Pasto.LoadModel("ModelosProject/pasto.obj");
+	//josef
+	cuerpo = Model();
+	cuerpo.LoadModel("ModelosProject/cuerpo.obj");
+	brazo = Model();
+	brazo.LoadModel("ModelosProject/brazo.obj");
+	pierna = Model();
+	pierna.LoadModel("ModelosProject/pierna.obj");
+	//npc machinarium
+	npcMachinarium = Model();
+	npcMachinarium.LoadModel("ModelosProject/secundario_mach.obj");
+	//zeppelin
+	zeppelin = Model();
+	zeppelin.LoadModel("ModelosProject/zeppelin.obj");
+	aspas = Model();
+	aspas.LoadModel("ModelosProject/aspas.obj");
 
 	// Temática Hora de Aventura & Extras
 	Pico_Helado = Model();     Pico_Helado.LoadModel("ModelosProject/PicoHelado.obj");
 	Banca = Model();           Banca.LoadModel("ModelosProject/banca.obj");
+	//finn
+	cuerpoFinn.LoadModel("ModelosProject/cuerpo_finn.obj");
+	brazoFinn.LoadModel("ModelosProject/brazo_finn.obj");
+	pieIzqFinn.LoadModel("ModelosProject/pie_izquierdo_finn.obj");
+	pieDerFinn.LoadModel("ModelosProject/pie_derecho_finn.obj");
+	//bmo adventure
+	bmo = Model();
+	bmo.LoadModel("ModelosProject/bmo.obj");
+	
+	
+	
+	
+	
+	
 
 	// =======================================================
 	// CONFIGURACIÓN DE SKYBOX (Alicia en el País de las Maravillas)
@@ -207,6 +295,21 @@ int main() {
 		1.0f, 0.001f, 0.00005f);
 	pointLightCount++;
 
+	// Luz de la lampara (itzel)
+	pointLights[1] = PointLight(1.0f, 1.0f, 1.0f,
+		0.3f, 2.0f,
+		12.0f, 2.0f, 4.0f,
+		0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+
+	//luz del hongo
+	pointLights[2] = PointLight(0.8f, 0.0f, 1.0f,
+		0.2f, 1.0f,       // Intensidad ambiental y difusa
+		-5.0f, 1.0f, 2.0f, // Posición (ajustar dependiendo de donde se poga el hongo en el main oficial)
+		0.3f, 0.2f, 0.1f); // Atenuación
+	pointLightCount++;
+
+
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0, uniformSpecularIntensity = 0, uniformShininess = 0;
 	GLuint uniformColor = 0;
@@ -225,6 +328,69 @@ int main() {
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
+
+		//AQUI VOY A PONER LO RELACIONADO CON VARIABLES DE LAS ANIMACIONES
+		///PARA EL HONGO QUE BRILLA
+		glm::vec3 posHongo = glm::vec3(-5.0f, -0.5f, 2.0f);
+		pointLights[2].SetPos(glm::vec3(posHongo.x, posHongo.y + 0.5f, posHongo.z));
+
+		//PARA LA TETERA
+		// posiciones de las 4 tazas sobre el plato
+		glm::vec3 posTazas[] = {
+			glm::vec3(-0.2f, 0.1f, 0.2f),  //frontal izq
+			glm::vec3(0.2f, 0.1f, 0.2f),   //(frontal der
+			glm::vec3(0.2f, 0.1f, -0.2f),  //trasera der
+			glm::vec3(-0.2f, 0.1f, -0.2f)  //trasera izq
+		};
+
+		float movTeteraX = 0.0f;
+		float movTeteraZ = 0.0f;
+
+		//PARA EL ZEPPELIN
+		float movZepX = 0.0f;
+		float movZepZ = 0.0f;
+		float anguloZep = 0.0f;
+		rotAspas += 500.0f * deltaTime;
+		if (rotAspas >= 360.0f) rotAspas = 0.0f;
+
+
+		////////////////////////////////////////////
+		// MOVIMIENTO DE JOSEF
+		////////////////////////////////////////////
+		caminando = false;
+		//se ajusta la velocidad
+		float velocidadCaminar = 0.05f * deltaTime;
+		float velocidadGiro = 1.0f * deltaTime;
+		// Flecha ARRIBA: Avanzar
+		if (mainWindow.getsKeys()[GLFW_KEY_UP]) {
+			posRobotX += sin(giroRobot * toRadians) * velocidadCaminar;
+			posRobotZ += cos(giroRobot * toRadians) * velocidadCaminar;
+			caminando = true;
+		}
+		// Flecha ABAJO: Retroceder
+		if (mainWindow.getsKeys()[GLFW_KEY_DOWN]) {
+			posRobotX -= sin(giroRobot * toRadians) * velocidadCaminar;
+			posRobotZ -= cos(giroRobot * toRadians) * velocidadCaminar;
+			caminando = true;
+		}
+		// Flecha IZQUIERDA: Girar sobre su propio eje
+		if (mainWindow.getsKeys()[GLFW_KEY_LEFT]) {
+			giroRobot += velocidadGiro;
+		}
+		// Flecha DERECHA: Girar hacia el otro lado
+		if (mainWindow.getsKeys()[GLFW_KEY_RIGHT]) {
+			giroRobot -= velocidadGiro;
+		}
+		if (caminando) {
+			oscilacion = sin(glfwGetTime() * 6.0f) * 25.0f;
+		}
+		else {
+			oscilacion = 0.0f;
+		}
+
+
+
+
 
 		glfwPollEvents();
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
@@ -287,7 +453,44 @@ int main() {
 		
 
 		//ANIMACIONES COMPLEJAS 
+		//ANIMACION COMPLEJA DEL HONGO QUE BRILLA
+		intensidadHongo = 1.5f + sin(glfwGetTime() * 3.0f);
+		pointLights[2].SetDiffuseIntensity(intensidadHongo);
 
+		//ANIMACION COMPLEJA DE LA TETERA QUE SIRVA
+		float tiempoTotal = glfwGetTime();
+		float duracionCiclo = 5.0f; // cada taza toma 5 seg
+		int indiceActual = (int)(tiempoTotal / duracionCiclo) % 4;
+		int indiceSiguiente = (indiceActual + 1) % 4;
+		float progreso = fmod(tiempoTotal, duracionCiclo);
+
+		if (progreso < 2.0f) {
+			float t = progreso / 2.0f;
+			movTeteraX = posTazas[indiceActual].x + (posTazas[indiceSiguiente].x - posTazas[indiceActual].x) * t;
+			movTeteraZ = posTazas[indiceActual].z + (posTazas[indiceSiguiente].z - posTazas[indiceActual].z) * t;
+			inclinacionTetera = 0.0f;
+		}
+		else {
+			movTeteraX = posTazas[indiceSiguiente].x;
+			movTeteraZ = posTazas[indiceSiguiente].z;
+
+			if (progreso > 3.0f && progreso < 4.0f) {
+				float tServido = (progreso - 3.0f);
+				inclinacionTetera = sin(3.14159f * tServido) * 60.0f;
+			}
+			else {
+				inclinacionTetera = 0.0f;
+			}
+		}
+
+		//ANIMACION COMPLEJA PARA EL ZEPPELIN
+		float tiempoZep = glfwGetTime() * 0.3f;
+		float radioZep = 60.0f; // Qué tan grande es el círculo
+		movZepX = radioZep * sin(tiempoZep);
+		movZepZ = radioZep * cos(tiempoZep);
+		anguloZep = atan2(sin(tiempoZep), cos(tiempoZep)) * (180.0f / 3.14159f);
+		float flotadoY = sin(glfwGetTime() * 0.8f) * 0.5f;
+		rotAspas += 600.0f * deltaTime;
 
 
 
@@ -328,6 +531,7 @@ int main() {
 		shaderList[0].SetSpotLights(spotLights, spotLightCount);
 
 		glm::mat4 model(1.0);
+		glm::mat4 modelaux(1.0);
 		glm::vec3 color(1.0f, 1.0f, 1.0f);
 
 		// 1. DIBUJAR PISO BASE
@@ -565,6 +769,169 @@ int main() {
 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Sombrero.RenderModel();
+
+
+		////////////////////////////////////////////////
+		// JOSEF
+		// ////////////////////////////////////////////////
+		
+		//base
+		glm::mat4 modelRobotBase = glm::mat4(1.0);
+		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX, 0.0f, posRobotZ));
+		modelRobotBase = glm::rotate(modelRobotBase, giroRobot * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		// cuerpo
+		model = modelRobotBase;
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		cuerpo.RenderModel();
+		// brazo izq
+		modelaux = modelRobotBase;
+		modelaux = glm::translate(modelaux, glm::vec3(-0.25f, 0.4f, 0.0f));
+		modelaux = glm::rotate(modelaux, oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		brazo.RenderModel();
+		//brazo derecho
+		modelaux = modelRobotBase;
+		modelaux = glm::translate(modelaux, glm::vec3(0.25f, 0.4f, 0.0f));
+		modelaux = glm::rotate(modelaux, -oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		brazo.RenderModel();
+		// pierna izq
+		modelaux = modelRobotBase;
+		modelaux = glm::translate(modelaux, glm::vec3(-0.1f, -0.33f, -0.03f));
+		modelaux = glm::rotate(modelaux, -oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		pierna.RenderModel();
+		// pierna derecha
+		modelaux = modelRobotBase;
+		modelaux = glm::translate(modelaux, glm::vec3(0.1f, -0.33f, -0.03f));
+		modelaux = glm::rotate(modelaux, oscilacion * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		pierna.RenderModel();
+
+		///////////////////////////////////////////
+		// FINN
+		//////////////////////////////////////////
+		glm::mat4 modelFinnBase = glm::mat4(1.0f);
+		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-5.0f, 0.6f, -8.0f));
+		modelFinnBase = glm::rotate(modelFinnBase, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(0.3f, 0.3f, 0.3f));
+		// cuerpo
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelFinnBase));
+		cuerpoFinn.RenderModel();
+		// brazo izq
+		modelaux = modelFinnBase;
+		modelaux = glm::translate(modelaux, glm::vec3(0.7f, 3.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		brazoFinn.RenderModel();
+		// brazo derecho
+		modelaux = modelFinnBase;
+		modelaux = glm::translate(modelaux, glm::vec3(-0.7f, 3.0f, 0.0f));
+		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		brazoFinn.RenderModel();
+		// pie derecho
+		modelaux = modelFinnBase;
+		modelaux = glm::translate(modelaux, glm::vec3(1.15f, -3.7f, -0.1f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		pieIzqFinn.RenderModel();
+		// pie izq
+		modelaux = modelFinnBase;
+		modelaux = glm::translate(modelaux, glm::vec3(-1.3f, -3.4f, -0.2f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		pieDerFinn.RenderModel();
+
+		////////////////////////////////////////////
+		// HONGO QUE BRILLA
+		//////////////////////////////////////////////
+		model = glm::mat4(1.0);
+		model = glm::translate(model, posHongo);
+		model = glm::scale(model, glm::vec3(2.5f, 3.5f, 2.5f));
+		if (intensidadHongo > 0.1f) {
+			color = glm::vec3(1.0f, 0.5f, 1.0f);
+		}
+		else {
+			color = glm::vec3(0.3f, 0.3f, 0.3f);
+		}
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		hongo1.RenderModel();
+
+
+		//////////////////////////////////////////////////////
+		// TETERA Y SUS TAZAS
+		///////////////////////////////////////////////////
+		//plato
+		glm::mat4 modelPlato = glm::mat4(1.0f);
+		modelPlato = glm::translate(modelPlato, glm::vec3(2.0f, -0.9f, 0.0f));
+		modelPlato = glm::scale(modelPlato, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelPlato));
+		plato.RenderModel();
+		//tazas
+		for (int i = 0; i < 4; i++) {
+			modelaux = modelPlato;
+			modelaux = glm::translate(modelaux, posTazas[i]);
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+			taza.RenderModel();
+		}
+		//tetera
+		modelaux = modelPlato;
+		modelaux = glm::translate(modelaux, glm::vec3(movTeteraX + 0.3f, 0.5f, movTeteraZ));
+		modelaux = glm::rotate(modelaux, inclinacionTetera * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		tetera.RenderModel();
+
+
+		/////////////////////////////////////////////////7
+		// NPC MACHINARIUM
+		////////////////////////////////////////////
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-10.0f, -1.0f, -5.0f));
+		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.08f, 0.08f, 0.08f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		npcMachinarium.RenderModel();
+
+
+		/////////////////////////////////////////////////////////////
+		// NPC BMO
+		///////////////////////////////////////////////////////////
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(-4.0f, -0.8f, -7.5f));
+		model = glm::rotate(model, -30.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		bmo.RenderModel();
+
+		/////////////////////////////////////////////////////////////77
+		// ZEPPELIN
+		////////////////////////////////////////////////////////////
+		glm::mat4 modelZep = glm::mat4(1.0f);
+		// Usamos las variables que calculamos con el seno y coseno
+		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY, movZepZ));
+		modelZep = glm::rotate(modelZep, anguloZep * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelZep = glm::scale(modelZep, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelZep));
+		zeppelin.RenderModel();
+		//aspas
+		modelaux = modelZep;
+		modelaux = glm::translate(modelaux, glm::vec3(0.0f, -4.7f, -2.7f));
+		modelaux = glm::rotate(modelaux, rotAspas * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		aspas.RenderModel();
+		modelaux = modelZep;
+		modelaux = glm::translate(modelaux, glm::vec3(0.0f, -4.7f, 0.8f));
+		modelaux = glm::rotate(modelaux, rotAspas * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
+		aspas.RenderModel();
+
+
+
+
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
