@@ -78,6 +78,8 @@ Model bmo;
 //zeppelin
 Model zeppelin;
 Model aspas;
+//Trenecito
+Model via_tren, carro_tren;
 
 
 Skybox skybox;
@@ -110,6 +112,11 @@ float inclinacionTetera = 0.0f;
 //PARA EL ZEPPELIN
 float rotZeppelin = 0.0f;
 float rotAspas = 0.0f;
+
+//PARA EL CARRO EN LAS VIAS
+float movCarrito = 0.0f;   
+static bool trenActivo = false;
+static bool teclaTPresionada = false;
 
 
 
@@ -235,6 +242,11 @@ int main() {
 	zeppelin.LoadModel("ModelosProject/zeppelin.obj");
 	aspas = Model();
 	aspas.LoadModel("ModelosProject/aspas.obj");
+	//mini carrito en vias de tren
+	via_tren = Model();
+	via_tren.LoadModel("ModelosProject/via_tren.obj");
+	carro_tren = Model();
+	carro_tren.LoadModel("ModelosProject/carro_tren.obj");
 
 	// Temática Hora de Aventura & Extras
 	Pico_Helado = Model();     Pico_Helado.LoadModel("ModelosProject/PicoHelado.obj");
@@ -407,7 +419,6 @@ int main() {
 
 
 
-
 		glfwPollEvents();
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
@@ -474,7 +485,24 @@ int main() {
 		// El multiplicador en 2.0f hace que el movimiento sea súper pesado, lento y robusto
 		rotGearActual += (rotGearObjetivo - rotGearActual) * 2.0f * deltaTime;
 		
+		////////////////////////////////////////
+		// CARRITO EN LAS VIAS (Tecla T)
+		//////////////////////////////////////////
+		// --- control del tren (TECLA T) ---
+		if (mainWindow.getsKeys()[GLFW_KEY_T]) {
+			if (!teclaTPresionada) {
+				trenActivo = !trenActivo;
+				teclaTPresionada = true;
+			}
+		}
+		else {
+			teclaTPresionada = false;
+		}
 
+		if (trenActivo) {
+			movCarrito += 15.0f * deltaTime; 
+			if (movCarrito > 150.0f) movCarrito = -150.0f; 
+		}
 		
 
 		//ANIMACIONES COMPLEJAS:
@@ -999,7 +1027,22 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		aspas.RenderModel();
 
+		//////////////////////////////////////////////////////////////////////
+		// CARRO Y VIAS
+		///////////////////////////////////////////////////////////////////
+		// vias
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 1.5f, -190.0f)); 
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		via_tren.RenderModel();
 
+		// carrito
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(movCarrito, 1.7f, -192.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		carro_tren.RenderModel();
 
 
 
