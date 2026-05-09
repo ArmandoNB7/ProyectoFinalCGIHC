@@ -199,10 +199,7 @@ int main() {
 
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 0.3f, 0.5f);
 
-	// =======================================================
-	// Carga de Textura del Piso (Empedrado)
-	// =======================================================
-	// Asegúrate de que esta ruta también apunte a donde tienes la imagen del piso
+	//Carga de textura oara nuestro psio
 	pisoTexture = Texture("TexturasProject/skybox/textura_piso.png");
 	pisoTexture.LoadTextureA();
 
@@ -211,7 +208,7 @@ int main() {
 	Mi_lamparita.LoadModel("ModelosProject/Mi_lamparita.obj");
 
 
-	// == = CARGA DE MODELOS DEL PROYECTO == =
+	// Carga de modelos proyecto final
 		// Temática Alicia
 	Puerta_Alicia = Model();   Puerta_Alicia.LoadModel("ModelosProject/puerta_alicia.obj");
 	Taza_Alicia = Model();     Taza_Alicia.LoadModel("ModelosProject/Taza_alicia.obj");
@@ -291,39 +288,33 @@ int main() {
 	
 	
 
-	// =======================================================
-	// CONFIGURACIÓN DE SKYBOX (Alicia en el País de las Maravillas)
-	// =======================================================
+	///Skybox para el mundo de dia con tematica de alicia 
 	std::vector<std::string> skyboxFaces;
-	// ¡Rutas corregidas basándome en tu carpeta exacta!
-	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_hongos.png"); // Right
-	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_hongos.png"); // Left
-	skyboxFaces.push_back("TexturasProject/skybox/textura_cielo.png");        // Up (Cielo)
-	skyboxFaces.push_back("TexturasProject/skybox/textura_cielo.png");         // Down (Piso)
-	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_reloj.png");  // Back
-	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_farolas.png");// Front
+	
+	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_hongos.png"); // Derecha
+	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_hongos.png"); // Izquierda
+	skyboxFaces.push_back("TexturasProject/skybox/textura_cielo.png");        // Arriba (Cielo)
+	skyboxFaces.push_back("TexturasProject/skybox/textura_cielo.png");         // AbajoPiso)
+	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_reloj.png");  // trasero
+	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_farolas.png");// Frente
 	skybox = Skybox(skyboxFaces);
 
-	// =======================================================
-	// CONFIGURACIÓN DE SKYBOX NOCTURNO
-	// =======================================================
+	//Configuracion para el skybox pero de noche, unicamente con una sola imagen para que se vea oscuro
 	std::vector<std::string> skyboxNocheFaces;
-	// Cambia estos nombres por los de las imágenes de noche que descargues
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); // Right
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Left
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");   // Up (Cielo estrellado)
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Down (Piso)
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Back
-	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); // Front
+	
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); 
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");   
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); 
 	skyboxNoche = Skybox(skyboxNocheFaces);
 
 
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
 
-	// =======================================================
-	// ILUMINACIÓN INICIAL
-	// =======================================================
+	//Seccion de iluminacion
 	// 1. Luz Direccional (El Sol)
 	mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.0f, -1.0f, -1.0f);
 
@@ -333,11 +324,11 @@ int main() {
 
 	// 3. Spotlight Rotatorio del Faro (SpotLight 1)
 	spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
-		0.0f, 30.0f,                 // INTENSIDAD: Subimos a 30.0f para más fuerza
+		0.0f, 30.0f,                 
 		-235.0f, 50.0f, 0.0f,
 		1.0f, -0.5f, 0.0f,
-		1.0f, 0.0005f, 0.00005f,     // RANGO: Le metimos más ceros para que viaje más lejos
-		60.0f);                      // CONO: Abierto a 45 grados (antes era 20)
+		1.0f, 0.0005f, 0.00005f,     
+		60.0f);                      
 	spotLightCount++;
 
 	// 3. Luz de la Farola (PointLight 0)
@@ -347,13 +338,13 @@ int main() {
 
 	// 4. Luz del Faro (PointLight 1)
 	pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
-		0.2f,   // AMBIENTAL en 0.0f: Ya no iluminará mágicamente las espaldas de los modelos.
-		1.5f,   // DIFUSA en 0.5f: Un fogonazo súper débil (antes estaba en 2.0 y 10.0).
+		0.2f,  
+		1.5f,   
 		-235.0f, 50.0f, 0.0f,
-		1.0f, 0.001f, 0.002f); // ATENUACIÓN: Aumenté estos dos últimos números para que el radio de la luz sea mucho más corto.
+		1.0f, 0.001f, 0.002f); 
 	pointLightCount++;
 
-	// Luz de la lampara (itzel)
+	// Luz de nuestra lampara 
 	pointLights[2] = PointLight(1.0f, 1.0f, 1.0f,
 		0.3f, 2.0f,
 		12.0f, 2.0f, 4.0f,
@@ -362,9 +353,9 @@ int main() {
 
 	//luz del hongo
 	pointLights[3] = PointLight(0.8f, 0.0f, 1.0f,
-		0.2f, 3.0f,       // Intensidad ambiental y difusa
-		-5.0f, 5.0f, 2.0f, // Posición (ajustar dependiendo de donde se poga el hongo en el main oficial)
-		0.3f, 0.01f, 0.002f); // Atenuación
+		0.2f, 3.0f,      
+		-5.0f, 5.0f, 2.0f, 
+		0.3f, 0.01f, 0.002f); 
 	pointLightCount++;
 
 	// luz del segundo honguito
@@ -379,12 +370,13 @@ int main() {
 	GLuint uniformColor = 0;
 	glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 1000.0f);
 
+	//Variables para animacions fuera del while
 	//Rotacion y movimiento del sombrero de copa
 
 	float movSombrero = 0.0f;
 	float rotSombrero = 0.0f;
 
-	// Variables para la animación del Engranaje (Tik-Tak)
+	// Variables para la animación del Engranaje 
 	bool animacionGearActiva = false;
 	bool teclaGPresionada = false;
 	bool teclaHPresionada = false;
@@ -397,9 +389,7 @@ int main() {
 	bool faroEncendido = true;
 	bool teclaPPresionada = false;
 
-	//// =======================================================
-	// Variables para el Sistema de Cámaras (4 Modos)
-	// =======================================================
+	// Variables para nuestro  Sistema de Cámaras (4 Modos)
 	int modoCamara = 1;
 	bool tecla1Presionada = false;
 	bool tecla2Presionada = false;
@@ -414,18 +404,18 @@ int main() {
 	bool teclaFPresionada = false;
 
 
-	// BUCLE PRINCIPAL
+	// While
 	while (!mainWindow.getShouldClose()) {
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		deltaTime += (now - lastTime) / limitFPS;
 		lastTime = now;
 
-		//AQUI VOY A PONER LO RELACIONADO CON VARIABLES DE LAS ANIMACIONES
-		///PARA EL HONGO QUE BRILLA
+
+		///Pasamos luces al hongquito que brilla
 		glm::vec3 posHongo = glm::vec3(60.0f, -0.5f, 150.0f);
 		pointLights[3].SetPos(glm::vec3(posHongo.x, posHongo.y + 0.5f, posHongo.z));
-		//PARA EL SEGUNDO HONGO
+		
 		// Actualizar el segundo hongo
 		glm::vec3 posHongo2 = glm::vec3(-60.0f, -1.0f, 100.0f);
 		pointLights[4].SetPos(glm::vec3(posHongo2.x, posHongo2.y + 6.0f, posHongo2.z)); 
@@ -451,30 +441,28 @@ int main() {
 		if (rotAspas >= 360.0f) rotAspas = 0.0f;
 
 
-		////////////////////////////////////////////
-		// MOVIMIENTO DE JOSEF
-		////////////////////////////////////////////
+		//Caminata de Josef
 		caminando = false;
 		//se ajusta la velocidad
 		float velocidadCaminar = 1.0f * deltaTime;
 		float velocidadGiro = 1.2f * deltaTime;
-		// Flecha ARRIBA: Avanzar
+		// Flecha arriba: Avanzar
 		if (mainWindow.getsKeys()[GLFW_KEY_UP]) {
 			posRobotX += sin(giroRobot * toRadians) * velocidadCaminar;
 			posRobotZ += cos(giroRobot * toRadians) * velocidadCaminar;
 			caminando = true;
 		}
-		// Flecha ABAJO: Retroceder
+		// Flecha abajo: Retroceder
 		if (mainWindow.getsKeys()[GLFW_KEY_DOWN]) {
 			posRobotX -= sin(giroRobot * toRadians) * velocidadCaminar;
 			posRobotZ -= cos(giroRobot * toRadians) * velocidadCaminar;
 			caminando = true;
 		}
-		// Flecha IZQUIERDA: Girar sobre su propio eje
+		// Flecha izq: Girar sobre su propio eje
 		if (mainWindow.getsKeys()[GLFW_KEY_LEFT]) {
 			giroRobot += velocidadGiro;
 		}
-		// Flecha DERECHA: Girar hacia el otro lado
+		// Flecha der: Girar hacia el otro lado
 		if (mainWindow.getsKeys()[GLFW_KEY_RIGHT]) {
 			giroRobot -= velocidadGiro;
 		}
@@ -487,7 +475,7 @@ int main() {
 
 
 
-
+		//Comento esto porque era de la camara de default, pero ahora tenemos 4 modos de camara, asi que el control de camara se hace mas abajo
 		//glfwPollEvents();
 		//Camara anterior
 		//camera.keyControl(mainWindow.getsKeys(), deltaTime);
@@ -500,9 +488,7 @@ int main() {
 
 
 
-		// =======================================================
-		// CONTROLES DE LUCES (TECLADO)
-		// =======================================================
+		//Control de luces por teclado (solo funcionan de noche)
 		// Boton OFF/ON para la lamparita (Tecla O)
 		static bool lamparaEncendida = true;
 		static bool teclaOPresionada = false;
@@ -526,12 +512,12 @@ int main() {
 			pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 		}
 
-		// =======================================================
+		
 		// Botón OFF/ON para el Faro (Tecla P)
-		// =======================================================
+		
 		if (mainWindow.getsKeys()[GLFW_KEY_P]) {
 			if (!teclaPPresionada) {
-				faroEncendido = !faroEncendido; // Cambia el estado
+				faroEncendido = !faroEncendido; 
 				teclaPPresionada = true;
 			}
 		}
@@ -539,25 +525,25 @@ int main() {
 			teclaPPresionada = false;
 		}
 
-		// Actualizamos la luz del Faro (PointLight 1) en cada fotograma
+		
 		if (faroEncendido) {
-			// INTENSO: Ambiental a 1.0f, Difusa a 15.0f, y Exponencial bajísimo (0.0001f) para que llegue al piso
+			
 			pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
 				1.0f, 15.0f,
 				-235.0f, 50.0f, 0.0f,
 				1.0f, 0.002f, 0.0001f);
 		}
 		else {
-			// APAGADO: Multiplicadores de luz en 0.0f
+			
 			pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
 				0.0f, 0.0f,
 				-235.0f, 50.0f, 0.0f,
 				1.0f, 0.002f, 0.0001f);
 		}
 
-		// =======================================================
-		// Botón OFF/ON para el Spotlight Rotatorio (Tecla F)
-		// =======================================================
+		
+		// OFF/ON para el faro rotarioo (Tecla F)
+	
 		if (mainWindow.getsKeys()[GLFW_KEY_F]) {
 			if (!teclaFPresionada) {
 				spotFaroEncendido = !spotFaroEncendido;
@@ -568,50 +554,48 @@ int main() {
 			teclaFPresionada = false;
 		}
 
-		// Matemática de rotación del cono de luz
+		
 		if (spotFaroEncendido) {
 			float velocidadGiro = 1.5f;
 			float anguloFaro = now * velocidadGiro;
 
-			// Mantenemos el -0.5f para que siga apuntando en diagonal hacia el piso
+			
 			glm::vec3 dirFaro = glm::vec3(sin(anguloFaro), -0.5f, cos(anguloFaro));
 
 			spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
-				0.0f, 30.0f,            // Más fuerza
+				0.0f, 30.0f,            
 				-235.0f, 50.0f, 0.0f,
 				dirFaro.x, dirFaro.y, dirFaro.z,
 				1.0f, 0.0005f, 0.00005f, // Más rango
-				60.0f);                  // Cono abierto
+				60.0f);                 
 		}
 		else {
-			// Apagado completo
+			
 			spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -235.0f, 50.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0005f, 0.00005f, 60.0f);
 		}
 
 
 
-		// =======================================================
+		
 		// CICLO DE DÍA Y NOCHE (60 Segundos)
-		// =======================================================
+		
 		float tiempoGlobal = fmod(now, 60.0f);
 		bool esNoche = (tiempoGlobal >= 30.0f); // Del 0 al 29 es Día, del 30 al 59 es Noche
 
 		if (esNoche) {
-			// 1. LUNA: Bajamos la intensidad de la Directional Light y le damos un tono azulado oscuro
+			
 			mainLight = DirectionalLight(0.2f, 0.2f, 0.4f, 0.1f, 0.1f, 0.0f, -1.0f, -1.0f);
 
-			// 2. ENCENDIDO AUTOMÁTICO DE LUMINARIAS
-			lamparaEncendida = true;
-			//faroEncendido = true; Esta linea la comento para que podamos apagar y prender el faro de noche 
-			spotFaroEncendido = true;
+			
+			//lamparaEncendida = true; Esta linea la comento para que podamos apagar y prender la farola de noche a nuestra voluntad
+			//faroEncendido = true; Esta linea la comento para que podamos apagar y prender el faro de noche a nuestra voluntad y q no se prenda sola 
+			//spotFaroEncendido = true;  Esta linea la comento para que podamos apagar y prender el faro dinamico de noche a nuestra voluntad
 		}
 		else {
-			// 1. SOL A MÁXIMA POTENCIA: 
-			// Subimos la ambiental a 0.6f para aclarar las sombras 
-			// y la difusa a 1.0f para que pegue con todo el brillo.
+			
 			mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.6f, 1.0f, 0.0f, -1.0f, -1.0f);
 
-			// 2. APAGADO AUTOMÁTICO DE LUMINARIAS
+			//Apagado cuando es de dia 
 			lamparaEncendida = false;
 			faroEncendido = false;
 			spotFaroEncendido = false;
@@ -621,22 +605,21 @@ int main() {
 		
 		
 
-		// =======================================================
+		
 		// Control del Engranaje (G Inicia / H Detiene)
-		// =======================================================
+		
 
-		// Tecla G: INICIAR
+		//inicio
 		if (mainWindow.getsKeys()[GLFW_KEY_G]) {
 			if (!teclaGPresionada) {
-				animacionGearActiva = !animacionGearActiva; // Activa/Desactiva
+				animacionGearActiva = !animacionGearActiva; 
 
-				// Sincronizamos el reloj exactamente al momento de encenderlo
-				// para que no intente dar giros acumulados del pasado.
+				
 				if (animacionGearActiva) {
 					tiempoUltimoPaso = now;
 				}
 				animacionGearActiva = true;
-				tiempoUltimoPaso = now; // Sincronizamos el reloj para que no se vuelva loco
+				tiempoUltimoPaso = now; 
 				teclaGPresionada = true;
 			}
 		}
@@ -644,7 +627,7 @@ int main() {
 			teclaGPresionada = false;
 		}
 
-		// Tecla H: DETENER
+		// pausar o detener
 		if (mainWindow.getsKeys()[GLFW_KEY_H]) {
 			if (!teclaHPresionada) {
 				animacionGearActiva = false;
@@ -655,21 +638,21 @@ int main() {
 			teclaHPresionada = false;
 		}
 
-		// Lógica del "Tik-Tak"
+		
 		if (animacionGearActiva) {
 			// Se espera exactamente 1.5 segundos
 			if (now - tiempoUltimoPaso > 1.5f) {
-				rotGearObjetivo += 45.0f; // Los grados que avanza en cada "Tak"
-				tiempoUltimoPaso = now;   // Reinicia el reloj
+				rotGearObjetivo += 45.0f; 
+				tiempoUltimoPaso = now;   
 			}
 		}
 
-		// El multiplicador en 2.0f hace que el movimiento sea súper pesado, lento y robusto
+		
 		rotGearActual += (rotGearObjetivo - rotGearActual) * 2.0f * deltaTime;
 		
-		////////////////////////////////////////
+		
 		// CARRITO EN LAS VIAS (Tecla T)
-		//////////////////////////////////////////
+		
 		// --- control del tren (TECLA T) ---
 		if (mainWindow.getsKeys()[GLFW_KEY_T]) {
 			if (!teclaTPresionada) {
@@ -783,16 +766,12 @@ int main() {
 
 
 
-		// =======================================================
-		// RENDERIZADO
-		// =======================================================
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 
-		//skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
-		// =======================================================
+		//skybox.DrawSkybox(camera.calculateViewMatrix(), projection); //comento esta porque era la antigua 
+		
 		// RENDERIZADO DEL SKYBOX (Día o Noche)
-		// =======================================================
+		
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -840,7 +819,7 @@ int main() {
 		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		pisoTexture.UseTexture();
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		meshList[0]->RenderMesh(); // meshList[0] es el piso en el código limpio
+		meshList[0]->RenderMesh(); 
 
 		// 2. DIBUJAR FAROLA
 		model = glm::mat4(1.0);
@@ -853,14 +832,10 @@ int main() {
 
 
 
-		// =========================================================
-		// ZONA 1: ALICIA EN EL PAÍS DE LAS MARAVILLAS (Esquina X+, Z+)
-		// =========================================================
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(5.0f, -1.0f, 5.0f));
-		// model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f)); // Descomenta si necesitas hacerlos más grandes/chicos
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Casa_Alicia.RenderModel();
+		
+		// ZONA 1: ALICIA EN EL PAÍS DE LAS MARAVILLAS 
+		
+		
 
 
 
@@ -956,9 +931,9 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Taza_Alicia.RenderModel();
 
-		// =========================================================
-		// ZONA 2: MACHINARIUM / STEAMPUNK (Esquina X-, Z-)
-		// =========================================================
+		
+		// ZONA 2: MACHINARIUM / STEAMPUNK 
+		
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(6.0f, 11.0f, 6.0f));
@@ -968,7 +943,7 @@ int main() {
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 
-		// APLICAMOS LA ROTACIÓN EN Y
+		
 		model = glm::rotate(model, glm::radians(rotGearActual), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
@@ -978,7 +953,7 @@ int main() {
 		model = glm::mat4(1.0);
 		// El engranaje y reloj principal los pongo cerca de la torre
 		model = glm::translate(model, glm::vec3(0.0f, 1.0f, -110.0f));
-		// APLICAMOS LA ROTACIÓN EN EL EJE Y
+		
 		model = glm::rotate(model, glm::radians(rotGearActual), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
@@ -1017,9 +992,9 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
 
-		// =========================================================
+		// ===============
 		// Faro
-		// =========================================================
+		// ================
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-235.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
@@ -1090,10 +1065,9 @@ int main() {
 
 
 
-		//YA arregle 
-		// =========================================================
-		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
-		// =========================================================
+		//YA arregle esto 
+		
+		// ZONA 3: HORA DE AVENTURA & EXTRAS 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(150.0f, -5.0f, 100.0f));
 		model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.9f));
@@ -1125,9 +1099,9 @@ int main() {
 		Sombrero.RenderModel();
 
 
-		////////////////////////////////////////////////
+		
 		// JOSEF
-		// ////////////////////////////////////////////////
+		
 		
 		//base
 		glm::mat4 modelRobotBase = glm::mat4(1.0);
@@ -1163,9 +1137,8 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		pierna.RenderModel();
 
-		///////////////////////////////////////////
+	
 		// FINN
-		//////////////////////////////////////////
 		glm::mat4 modelFinnBase = glm::mat4(1.0f);
 		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-100.0f, 8.4f, 60.0f));
 		modelFinnBase = glm::rotate(modelFinnBase, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1195,9 +1168,8 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		pieDerFinn.RenderModel();
 
-		////////////////////////////////////////////
+		
 		// HONGO QUE BRILLA
-		//////////////////////////////////////////////
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posHongo);
 		model = glm::scale(model, glm::vec3(10.0f, 14.0f, 10.0f));
@@ -1213,9 +1185,9 @@ int main() {
 		hongo1.RenderModel();
 
 
-		//////////////////////////////////////////////////////
+		
 		// TETERA Y SUS TAZAS
-		///////////////////////////////////////////////////
+		// 
 		//plato
 		glm::mat4 modelPlato = glm::mat4(1.0f);
 		modelPlato = glm::translate(modelPlato, glm::vec3(-145.0f, 12.0f, 105.0f));
@@ -1244,9 +1216,9 @@ int main() {
 		Mesa_Alicia.RenderModel();
 
 
-		/////////////////////////////////////////////////7
+		
 		// NPC MACHINARIUM
-		////////////////////////////////////////////
+
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, -150.0f));
 		model = glm::rotate(model, 180.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1256,9 +1228,9 @@ int main() {
 		npcMachinarium.RenderModel();
 
 
-		/////////////////////////////////////////////////////////////
+		
 		// NPC BMO
-		///////////////////////////////////////////////////////////
+
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(40.0f, 1.0f, 75.0f));
 		model = glm::rotate(model, -30.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1267,9 +1239,9 @@ int main() {
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		bmo.RenderModel();
 
-		/////////////////////////////////////////////////////////////77
+		
 		// ZEPPELIN
-		////////////////////////////////////////////////////////////
+
 		glm::mat4 modelZep = glm::mat4(1.0f);
 		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY + 105.0f, movZepZ));
 		modelZep = glm::rotate(modelZep, anguloZep * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1288,9 +1260,8 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		aspas.RenderModel();
 
-		//////////////////////////////////////////////////////////////////////
+		
 		// CARRO Y VIAS
-		///////////////////////////////////////////////////////////////////
 		// vias
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(40.0f, 1.5f, -190.0f)); 
@@ -1309,9 +1280,8 @@ int main() {
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		carro_tren.RenderModel();
 
-		////////////////////////////////////////////////////////////
+		
 		// LOCOMOTORA Y HUMITO
-		////////////////////////////////////////////////////////
 		// locomotora
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(140.0f, -1.0f, -90.0f));
@@ -1321,17 +1291,17 @@ int main() {
 		locomotora.RenderModel();
 
 		//// dibujar humito
-		// --- ANIMACIÓN BÁSICA DEL HUMO (MEJORADA) ---
-		// 2. DIBUJAR HUMITO (¡Ahora sí va a funcionar!)
+		
+		
 		if (locoActiva) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			model = glm::mat4(1.0);
-			// Posición: La locomotora está en 140, el humo sale de su chimenea
+			
 			model = glm::translate(model, glm::vec3(140.0f, 80.0f + movHumoY, -52.0f));
 
-			// Rotación: Hacemos que el humo gire un poco mientras sube (Animación Simple)
+			
 			model = glm::rotate(model, (movHumoY * 50.0f) * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
 			model = glm::scale(model, glm::vec3(escalaHumo+20.0f, escalaHumo+25.0f, escalaHumo+20.0f));
@@ -1343,11 +1313,11 @@ int main() {
 			glDisable(GL_BLEND);
 
 
-		// =======================================================
-		// SELECTOR DE CÁMARAS (Teclas 1, 2, 3, 4)
-		// =======================================================
+		
 
-		// TECLA 1: Cámara Libre (Restauramos su velocidad al activarla)
+		// SELECTOR DE CÁMARAS (Teclas 1, 2, 3, 4)
+		// 
+		// TECLA 1: Cámara Default
 		if (mainWindow.getsKeys()[GLFW_KEY_1]) {
 			if (!tecla1Presionada) {
 				modoCamara = 1;
@@ -1369,43 +1339,43 @@ int main() {
 		if (mainWindow.getsKeys()[GLFW_KEY_3]) {
 			if (!tecla3Presionada) {
 				modoCamara = 3;
-				// Al encenderla, la centramos y la mandamos súper alto (Y=250)
+				
 				cam3X = 0.0f; cam3Z = 0.0f; cam3Y = 250.0f;
 				tecla3Presionada = true;
 			}
 		}
 		else { tecla3Presionada = false; }
 
-		// TECLA 4: Recorrido Cinemático
+		// TECLA 4: Recorrido entre 3 elementos
 		if (mainWindow.getsKeys()[GLFW_KEY_4]) {
 			if (!tecla4Presionada) { modoCamara = 4; tecla4Presionada = true; }
 		}
 		else { tecla4Presionada = false; }
 
 
-		// =======================================================
+		
 		// EJECUCIÓN DEL MODO DE CÁMARA SELECCIONADO
-		// =======================================================
+
 		if (modoCamara == 1) {
-			// MODO 1: LIBRE
+			// MODO 1: LIBRE default
 			camera.keyControl(mainWindow.getsKeys(), deltaTime);
 			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 		}
 		else if (modoCamara == 2) {
-			// MODO 2: 3ra PERSONA (Anclada al movimiento y rotación de Josef)
+			// MODO 2: 3ra persona 
 			float distTrasera = 40.0f;
 			float alturaCam = 20.0f;
 			float realJosefX = posRobotX;
 			float realJosefZ = posRobotZ + 230.0f;
 
-			// Mantiene la posición a las espaldas
+			
 			float camX = realJosefX - sin(giroRobot * toRadians) * distTrasera;
 			float camZ = realJosefZ - cos(giroRobot * toRadians) * distTrasera;
 
-			// ¡LA MAGIA AQUÍ!: El YAW (tercer parámetro) ahora es '90.0f - giroRobot'
-			// Esto obliga a la cámara a rotar en sincronía perfecta con las flechas Izq/Der
+			
 			camera = Camera(glm::vec3(camX, alturaCam, camZ), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f - giroRobot, -15.0f, 0.0f, 0.0f);
 		}
+		//MODO 3: Camara aerea
 		else if (modoCamara == 3) {
 			float velMapa = 2.0f * deltaTime;
 
@@ -1422,10 +1392,10 @@ int main() {
 			camera = Camera(glm::vec3(cam3X, cam3Y, cam3Z), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -80.0f, 0.0f, 0.0f);
 		}
 		else if (modoCamara == 4) {
-			// MODO 4: CINEMÁTICA
+			// MODO 4: cinematica
 			float tiempoTour = fmod(glfwGetTime(), 15.0f);
 			if (tiempoTour < 5.0f) {
-				// 1. Pico Helado: Subimos la Y de 75 a 170.0f para llegar a la verdadera punta
+				//1.pico hielo
 				camera = Camera(glm::vec3(150.0f, 170.0f, 100.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f, 0.0f, 0.0f);
 			}
 			else if (tiempoTour < 10.0f) {
