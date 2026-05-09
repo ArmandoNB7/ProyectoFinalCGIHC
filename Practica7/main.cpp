@@ -78,6 +78,8 @@ Model bmo;
 //zeppelin
 Model zeppelin;
 Model aspas;
+//Trenecito
+Model via_tren, carro_tren;
 
 
 Skybox skybox;
@@ -110,6 +112,11 @@ float inclinacionTetera = 0.0f;
 //PARA EL ZEPPELIN
 float rotZeppelin = 0.0f;
 float rotAspas = 0.0f;
+
+//PARA EL CARRO EN LAS VIAS
+float movCarrito = 0.0f;   
+static bool trenActivo = false;
+static bool teclaTPresionada = false;
 
 
 
@@ -194,8 +201,6 @@ int main() {
 
 	// == = CARGA DE MODELOS DEL PROYECTO == =
 		// Temática Alicia
-	Casa_Alicia = Model();     Casa_Alicia.LoadModel("ModelosProject/casa_alicia.obj");
-	Comedor_Alicia = Model();  Comedor_Alicia.LoadModel("ModelosProject/comedor_alicia.obj");
 	Puerta_Alicia = Model();   Puerta_Alicia.LoadModel("ModelosProject/puerta_alicia.obj");
 	Taza_Alicia = Model();     Taza_Alicia.LoadModel("ModelosProject/Taza_alicia.obj");
 	Hongo = Model();           Hongo.LoadModel("ModelosProject/hongo.obj");
@@ -237,6 +242,11 @@ int main() {
 	zeppelin.LoadModel("ModelosProject/zeppelin.obj");
 	aspas = Model();
 	aspas.LoadModel("ModelosProject/aspas.obj");
+	//mini carrito en vias de tren
+	via_tren = Model();
+	via_tren.LoadModel("ModelosProject/via_tren.obj");
+	carro_tren = Model();
+	carro_tren.LoadModel("ModelosProject/carro_tren.obj");
 
 	// Temática Hora de Aventura & Extras
 	Pico_Helado = Model();     Pico_Helado.LoadModel("ModelosProject/PicoHelado.obj");
@@ -305,11 +315,17 @@ int main() {
 
 	//luz del hongo
 	pointLights[3] = PointLight(0.8f, 0.0f, 1.0f,
-		0.2f, 1.0f,       // Intensidad ambiental y difusa
-		-5.0f, 1.0f, 2.0f, // Posición (ajustar dependiendo de donde se poga el hongo en el main oficial)
-		0.3f, 0.2f, 0.1f); // Atenuación
+		0.2f, 3.0f,       // Intensidad ambiental y difusa
+		-5.0f, 5.0f, 2.0f, // Posición (ajustar dependiendo de donde se poga el hongo en el main oficial)
+		0.3f, 0.01f, 0.002f); // Atenuación
 	pointLightCount++;
 
+	// luz del segundo honguito
+	pointLights[4] = PointLight(0.8f, 0.0f, 1.0f,
+		0.2f, 3.0f,
+		-60.0f, 5.0f, 100.0f,
+		0.3f, 0.01f, 0.002f);
+	pointLightCount++; 
 
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0, uniformSpecularIntensity = 0, uniformShininess = 0;
@@ -346,7 +362,12 @@ int main() {
 		//AQUI VOY A PONER LO RELACIONADO CON VARIABLES DE LAS ANIMACIONES
 		///PARA EL HONGO QUE BRILLA
 		glm::vec3 posHongo = glm::vec3(60.0f, -0.5f, 150.0f);
-		pointLights[2].SetPos(glm::vec3(posHongo.x, posHongo.y + 0.5f, posHongo.z));
+		pointLights[3].SetPos(glm::vec3(posHongo.x, posHongo.y + 0.5f, posHongo.z));
+		//PARA EL SEGUNDO HONGO
+		// Actualizar el segundo hongo
+		glm::vec3 posHongo2 = glm::vec3(-60.0f, -1.0f, 100.0f);
+		pointLights[4].SetPos(glm::vec3(posHongo2.x, posHongo2.y + 6.0f, posHongo2.z)); 
+		pointLights[4].SetDiffuseIntensity(intensidadHongo);
 
 		//PARA LA TETERA
 		// posiciones de las 4 tazas sobre el plato
@@ -401,7 +422,6 @@ int main() {
 		else {
 			oscilacion = 0.0f;
 		}
-
 
 
 
@@ -478,6 +498,13 @@ int main() {
 		// Tecla G: INICIAR
 		if (mainWindow.getsKeys()[GLFW_KEY_G]) {
 			if (!teclaGPresionada) {
+				animacionGearActiva = !animacionGearActiva; // Activa/Desactiva
+
+				// Sincronizamos el reloj exactamente al momento de encenderlo
+				// para que no intente dar giros acumulados del pasado.
+				if (animacionGearActiva) {
+					tiempoUltimoPaso = now;
+				}
 				animacionGearActiva = true;
 				tiempoUltimoPaso = now; // Sincronizamos el reloj para que no se vuelva loco
 				teclaGPresionada = true;
@@ -507,8 +534,29 @@ int main() {
 			}
 		}
 
+		// El multiplicador en 2.0f hace que el movimiento sea súper pesado, lento y robusto
+		rotGearActual += (rotGearObjetivo - rotGearActual) * 2.0f * deltaTime;
+		
+		////////////////////////////////////////
+		// CARRITO EN LAS VIAS (Tecla T)
+		//////////////////////////////////////////
+		// --- control del tren (TECLA T) ---
+		if (mainWindow.getsKeys()[GLFW_KEY_T]) {
+			if (!teclaTPresionada) {
+				trenActivo = !trenActivo;
+				teclaTPresionada = true;
+			}
+		}
+		else {
+			teclaTPresionada = false;
+		}
+
 		// El movimiento físico: le bajé la velocidad a 1.5f para que el "tirón" sea lento y muy pesado
 		rotGearActual += (rotGearObjetivo - rotGearActual) * 1.5f * deltaTime;
+		if (trenActivo) {
+			movCarrito += 15.0f * deltaTime; 
+			if (movCarrito > 150.0f) movCarrito = -150.0f; 
+		}
 		
 
 		//ANIMACIONES COMPLEJAS:
@@ -540,7 +588,7 @@ int main() {
 			rotSombrero = 0.0f;
 		}
 		//ANIMACION COMPLEJA DEL HONGO QUE BRILLA
-		intensidadHongo = 1.5f + sin(glfwGetTime() * 3.0f);
+		intensidadHongo = 3.0f + (sin(glfwGetTime() * 3.0f) * 2.0f);
 		pointLights[3].SetDiffuseIntensity(intensidadHongo);
 
 		//ANIMACION COMPLEJA DE LA TETERA QUE SIRVA
@@ -571,7 +619,7 @@ int main() {
 
 		//ANIMACION COMPLEJA PARA EL ZEPPELIN
 		float tiempoZep = glfwGetTime() * 0.3f;
-		float radioZep = 200.0f; // Qué tan grande es el círculo
+		float radioZep = 200.0f; // qué tan grande es el círculo
 		movZepX = radioZep * sin(tiempoZep);
 		movZepZ = radioZep * cos(tiempoZep);
 		anguloZep = atan2(sin(tiempoZep), cos(tiempoZep)) * (180.0f / 3.14159f);
@@ -657,11 +705,6 @@ int main() {
 		Hongo.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 150.0f));
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Hongo.RenderModel();
-
-		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(60.0f, -1.0f, 200.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Hongo.RenderModel();
@@ -671,11 +714,22 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Hongo.RenderModel();
 
-
+		//hacemos otro hongo brilloso
+		posHongo2 = glm::vec3(-60.0f, -1.0f, 100.0f);
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 100.0f));
+		model = glm::translate(model, posHongo2);
+		model = glm::scale(model, glm::vec3(10.0f, 14.0f, 10.0f));
+		if (intensidadHongo > 0.1f) {
+			color = glm::vec3(1.0f, 0.5f, 1.0f);
+		}
+		else {
+			color = glm::vec3(0.3f, 0.3f, 0.3f);
+		}
+
+		glUniform3fv(uniformColor, 1, glm::value_ptr(color));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Hongo.RenderModel();
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		hongo1.RenderModel();
 
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(-60.0f, -1.0f, 150.0f));
@@ -871,7 +925,7 @@ int main() {
 		
 		//base
 		glm::mat4 modelRobotBase = glm::mat4(1.0);
-		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX+0.0f, 3.0f, posRobotZ+230.0f));
+		modelRobotBase = glm::translate(modelRobotBase, glm::vec3(posRobotX+0.0f, 5.0f, posRobotZ+230.0f));
 		modelRobotBase = glm::rotate(modelRobotBase, giroRobot * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelRobotBase = glm::scale(modelRobotBase, glm::vec3(10.0f, 10.0f, 10.0f));
 		// cuerpo
@@ -907,7 +961,7 @@ int main() {
 		// FINN
 		//////////////////////////////////////////
 		glm::mat4 modelFinnBase = glm::mat4(1.0f);
-		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-100.0f, 2.0f, 60.0f));
+		modelFinnBase = glm::translate(modelFinnBase, glm::vec3(-100.0f, 8.4f, 60.0f));
 		modelFinnBase = glm::rotate(modelFinnBase, 45.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelFinnBase = glm::scale(modelFinnBase, glm::vec3(2.0f, 2.0f, 2.0f));
 		// cuerpo
@@ -921,6 +975,7 @@ int main() {
 		// brazo derecho
 		modelaux = modelFinnBase;
 		modelaux = glm::translate(modelaux, glm::vec3(-0.7f, 3.0f, 0.0f));
+		modelaux = glm::scale(modelaux, glm::vec3(-1.0f, 1.0f, 1.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		brazoFinn.RenderModel();
 		// pie derecho
@@ -939,7 +994,7 @@ int main() {
 		//////////////////////////////////////////////
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posHongo);
-		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 14.0f, 10.0f));
 		if (intensidadHongo > 0.1f) {
 			color = glm::vec3(1.0f, 0.5f, 1.0f);
 		}
@@ -1010,7 +1065,6 @@ int main() {
 		// ZEPPELIN
 		////////////////////////////////////////////////////////////
 		glm::mat4 modelZep = glm::mat4(1.0f);
-		// Usamos las variables que calculamos con el seno y coseno
 		modelZep = glm::translate(modelZep, glm::vec3(movZepX, 45.0f + flotadoY + 105.0f, movZepZ));
 		modelZep = glm::rotate(modelZep, anguloZep * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
 		modelZep = glm::scale(modelZep, glm::vec3(4.0f, 4.0f, 4.0f));
@@ -1028,7 +1082,22 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(modelaux));
 		aspas.RenderModel();
 
+		//////////////////////////////////////////////////////////////////////
+		// CARRO Y VIAS
+		///////////////////////////////////////////////////////////////////
+		// vias
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0f, 1.5f, -190.0f)); 
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		via_tren.RenderModel();
 
+		// carrito
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(movCarrito, 1.7f, -192.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		carro_tren.RenderModel();
 
 
 
