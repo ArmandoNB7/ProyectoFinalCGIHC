@@ -83,6 +83,7 @@ Model via_tren, carro_tren;
 
 
 Skybox skybox;
+Skybox skyboxNoche;
 
 Material Material_brillante;
 Material Material_opaco;
@@ -279,6 +280,19 @@ int main() {
 	skyboxFaces.push_back("TexturasProject/skybox/textura_pared_farolas.png");// Front
 	skybox = Skybox(skyboxFaces);
 
+	// =======================================================
+	// CONFIGURACIÓN DE SKYBOX NOCTURNO
+	// =======================================================
+	std::vector<std::string> skyboxNocheFaces;
+	// Cambia estos nombres por los de las imágenes de noche que descargues
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); // Right
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Left
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");   // Up (Cielo estrellado)
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Down (Piso)
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png");  // Back
+	skyboxNocheFaces.push_back("TexturasProject/skybox/noche_estrellada.png"); // Front
+	skyboxNoche = Skybox(skyboxNocheFaces);
+
 
 	Material_brillante = Material(4.0f, 256);
 	Material_opaco = Material(0.3f, 4);
@@ -293,8 +307,17 @@ int main() {
 	spotLights[0] = SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 5.0f);
 	spotLightCount++;
 
+	// 3. Spotlight Rotatorio del Faro (SpotLight 1)
+	spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
+		0.0f, 30.0f,                 // INTENSIDAD: Subimos a 30.0f para más fuerza
+		-235.0f, 50.0f, 0.0f,
+		1.0f, -0.5f, 0.0f,
+		1.0f, 0.0005f, 0.00005f,     // RANGO: Le metimos más ceros para que viaje más lejos
+		60.0f);                      // CONO: Abierto a 45 grados (antes era 20)
+	spotLightCount++;
+
 	// 3. Luz de la Farola (PointLight 0)
-	glm::vec3 posFarola = glm::vec3(10.0f, -1.0f, -10.0f);
+	glm::vec3 posFarola = glm::vec3(-15.0f, 0.0f, 220.0f);
 	pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 5.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 	pointLightCount++;
 
@@ -350,6 +373,21 @@ int main() {
 	bool faroEncendido = true;
 	bool teclaPPresionada = false;
 
+	//// =======================================================
+	// Variables para el Sistema de Cámaras (4 Modos)
+	// =======================================================
+	int modoCamara = 1;
+	bool tecla1Presionada = false;
+	bool tecla2Presionada = false;
+	bool tecla3Presionada = false;
+	bool tecla4Presionada = false;
+	float cam3X = 0.0f;
+	float cam3Y = 250.0f;
+	float cam3Z = 0.0f;
+
+	//// Variables para el Spotlight del Faro
+	bool spotFaroEncendido = true;
+	bool teclaFPresionada = false;
 
 
 	// BUCLE PRINCIPAL
@@ -426,10 +464,15 @@ int main() {
 
 
 
-		glfwPollEvents();
+		//glfwPollEvents();
 		//Camara anterior
-		camera.keyControl(mainWindow.getsKeys(), deltaTime);
-		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		//camera.keyControl(mainWindow.getsKeys(), deltaTime);
+		//camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+
+		glfwPollEvents();
+
+
 
 
 
@@ -487,6 +530,69 @@ int main() {
 				-235.0f, 50.0f, 0.0f,
 				1.0f, 0.002f, 0.0001f);
 		}
+
+		// =======================================================
+		// Botón OFF/ON para el Spotlight Rotatorio (Tecla F)
+		// =======================================================
+		if (mainWindow.getsKeys()[GLFW_KEY_F]) {
+			if (!teclaFPresionada) {
+				spotFaroEncendido = !spotFaroEncendido;
+				teclaFPresionada = true;
+			}
+		}
+		else {
+			teclaFPresionada = false;
+		}
+
+		// Matemática de rotación del cono de luz
+		if (spotFaroEncendido) {
+			float velocidadGiro = 1.5f;
+			float anguloFaro = now * velocidadGiro;
+
+			// Mantenemos el -0.5f para que siga apuntando en diagonal hacia el piso
+			glm::vec3 dirFaro = glm::vec3(sin(anguloFaro), -0.5f, cos(anguloFaro));
+
+			spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f,
+				0.0f, 30.0f,            // Más fuerza
+				-235.0f, 50.0f, 0.0f,
+				dirFaro.x, dirFaro.y, dirFaro.z,
+				1.0f, 0.0005f, 0.00005f, // Más rango
+				60.0f);                  // Cono abierto
+		}
+		else {
+			// Apagado completo
+			spotLights[1] = SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -235.0f, 50.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0005f, 0.00005f, 60.0f);
+		}
+
+
+
+		// =======================================================
+		// CICLO DE DÍA Y NOCHE (60 Segundos)
+		// =======================================================
+		float tiempoGlobal = fmod(now, 60.0f);
+		bool esNoche = (tiempoGlobal >= 30.0f); // Del 0 al 29 es Día, del 30 al 59 es Noche
+
+		if (esNoche) {
+			// 1. LUNA: Bajamos la intensidad de la Directional Light y le damos un tono azulado oscuro
+			mainLight = DirectionalLight(0.2f, 0.2f, 0.4f, 0.1f, 0.1f, 0.0f, -1.0f, -1.0f);
+
+			// 2. ENCENDIDO AUTOMÁTICO DE LUMINARIAS
+			lamparaEncendida = true;
+			//faroEncendido = true; Esta linea la comento para que podamos apagar y prender el faro de noche 
+			spotFaroEncendido = true;
+		}
+		else {
+			// 1. SOL A MÁXIMA POTENCIA: 
+			// Subimos la ambiental a 0.6f para aclarar las sombras 
+			// y la difusa a 1.0f para que pegue con todo el brillo.
+			mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.6f, 1.0f, 0.0f, -1.0f, -1.0f);
+
+			// 2. APAGADO AUTOMÁTICO DE LUMINARIAS
+			lamparaEncendida = false;
+			faroEncendido = false;
+			spotFaroEncendido = false;
+		}
+
 		//ANIMACIONES BASICAS:
 		
 		
@@ -554,7 +660,7 @@ int main() {
 		// El movimiento físico: le bajé la velocidad a 1.5f para que el "tirón" sea lento y muy pesado
 		rotGearActual += (rotGearObjetivo - rotGearActual) * 1.5f * deltaTime;
 		if (trenActivo) {
-			movCarrito += 15.0f * deltaTime; 
+			movCarrito += 5.0f * deltaTime; 
 			if (movCarrito > 150.0f) movCarrito = -150.0f; 
 		}
 		
@@ -639,7 +745,21 @@ int main() {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		//skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		// =======================================================
+		// RENDERIZADO DEL SKYBOX (Día o Noche)
+		// =======================================================
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		if (esNoche) {
+			skyboxNoche.DrawSkybox(camera.calculateViewMatrix(), projection);
+		}
+		else {
+			skybox.DrawSkybox(camera.calculateViewMatrix(), projection);
+		}
+
+
 
 		shaderList[0].UseShader();
 		uniformModel = shaderList[0].GetModelLocation();
@@ -681,10 +801,12 @@ int main() {
 		// 2. DIBUJAR FAROLA
 		model = glm::mat4(1.0);
 		model = glm::translate(model, posFarola);
-		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		model = glm::scale(model, glm::vec3(6.0f, 6.0f, 6.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		Mi_lamparita.RenderModel();
+
+
 
 
 		// =========================================================
@@ -846,7 +968,7 @@ int main() {
 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(120.0f, -1.0f, -120.0f));
+		model = glm::translate(model, glm::vec3(120.0f, 0.0f, -120.0f));
 		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
@@ -1100,6 +1222,102 @@ int main() {
 		carro_tren.RenderModel();
 
 
+		// =======================================================
+		// SELECTOR DE CÁMARAS (Teclas 1, 2, 3, 4)
+		// =======================================================
+
+		// TECLA 1: Cámara Libre (Restauramos su velocidad al activarla)
+		if (mainWindow.getsKeys()[GLFW_KEY_1]) {
+			if (!tecla1Presionada) {
+				modoCamara = 1;
+				camera = Camera(camera.getCameraPosition(), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 2.5f, 0.5f);
+				tecla1Presionada = true;
+			}
+		}
+		else {
+			tecla1Presionada = false;
+		}
+
+		// TECLA 2: 3ra Persona
+		if (mainWindow.getsKeys()[GLFW_KEY_2]) {
+			if (!tecla2Presionada) { modoCamara = 2; tecla2Presionada = true; }
+		}
+		else { tecla2Presionada = false; }
+
+		// TECLA 3: Cámara Aérea
+		if (mainWindow.getsKeys()[GLFW_KEY_3]) {
+			if (!tecla3Presionada) {
+				modoCamara = 3;
+				// Al encenderla, la centramos y la mandamos súper alto (Y=250)
+				cam3X = 0.0f; cam3Z = 0.0f; cam3Y = 250.0f;
+				tecla3Presionada = true;
+			}
+		}
+		else { tecla3Presionada = false; }
+
+		// TECLA 4: Recorrido Cinemático
+		if (mainWindow.getsKeys()[GLFW_KEY_4]) {
+			if (!tecla4Presionada) { modoCamara = 4; tecla4Presionada = true; }
+		}
+		else { tecla4Presionada = false; }
+
+
+		// =======================================================
+		// EJECUCIÓN DEL MODO DE CÁMARA SELECCIONADO
+		// =======================================================
+		if (modoCamara == 1) {
+			// MODO 1: LIBRE
+			camera.keyControl(mainWindow.getsKeys(), deltaTime);
+			camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		}
+		else if (modoCamara == 2) {
+			// MODO 2: 3ra PERSONA (Anclada al movimiento y rotación de Josef)
+			float distTrasera = 40.0f;
+			float alturaCam = 20.0f;
+			float realJosefX = posRobotX;
+			float realJosefZ = posRobotZ + 230.0f;
+
+			// Mantiene la posición a las espaldas
+			float camX = realJosefX - sin(giroRobot * toRadians) * distTrasera;
+			float camZ = realJosefZ - cos(giroRobot * toRadians) * distTrasera;
+
+			// ¡LA MAGIA AQUÍ!: El YAW (tercer parámetro) ahora es '90.0f - giroRobot'
+			// Esto obliga a la cámara a rotar en sincronía perfecta con las flechas Izq/Der
+			camera = Camera(glm::vec3(camX, alturaCam, camZ), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f - giroRobot, -15.0f, 0.0f, 0.0f);
+		}
+		else if (modoCamara == 3) {
+			float velMapa = 2.0f * deltaTime;
+
+			if (mainWindow.getsKeys()[GLFW_KEY_A]) cam3X -= velMapa;
+			if (mainWindow.getsKeys()[GLFW_KEY_D]) cam3X += velMapa;
+
+			if (mainWindow.getsKeys()[GLFW_KEY_W]) cam3Z -= velMapa;
+			if (mainWindow.getsKeys()[GLFW_KEY_S]) cam3Z += velMapa;
+
+			if (cam3X < -280.0f) cam3X = -280.0f;
+			if (cam3X > 280.0f) cam3X = 280.0f;
+			if (cam3Z < -280.0f) cam3Z = -280.0f;
+			if (cam3Z > 280.0f) cam3Z = 280.0f;
+
+			camera = Camera(glm::vec3(cam3X, cam3Y, cam3Z), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -80.0f, 0.0f, 0.0f);
+		}
+		else if (modoCamara == 4) {
+			// MODO 4: CINEMÁTICA
+			float tiempoTour = fmod(glfwGetTime(), 15.0f);
+			if (tiempoTour < 5.0f) {
+				// 1. Pico Helado: Subimos la Y de 75 a 170.0f para llegar a la verdadera punta
+				camera = Camera(glm::vec3(150.0f, 170.0f, 100.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -20.0f, 0.0f, 0.0f);
+			}
+			else if (tiempoTour < 10.0f) {
+				// 2. Torre del Reloj
+				camera = Camera(glm::vec3(0.0f, 120.0f, 80.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, -30.0f, 0.0f, 0.0f);
+			}
+			else {
+				// 3. Zepelín
+				float alturaZep = 45.0f + flotadoY + 105.0f;
+				camera = Camera(glm::vec3(movZepX + 40.0f, alturaZep + 20.0f, movZepZ + 40.0f), glm::vec3(0.0f, 1.0f, 0.0f), anguloZep + 200.0f, -20.0f, 0.0f, 0.0f);
+			}
+		}
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
