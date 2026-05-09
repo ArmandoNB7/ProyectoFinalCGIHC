@@ -321,12 +321,19 @@ int main() {
 	float movSombrero = 0.0f;
 	float rotSombrero = 0.0f;
 
-	//// Variables para la animación del Engranaje (Gear1)
+	// Variables para la animación del Engranaje (Tik-Tak)
 	bool animacionGearActiva = false;
 	bool teclaGPresionada = false;
+	bool teclaHPresionada = false;
 	float rotGearActual = 0.0f;
 	float rotGearObjetivo = 0.0f;
 	float tiempoUltimoPaso = 0.0f;
+
+	//Variables para el faro
+	// Variables para el control del Faro (Tecla P)
+	bool faroEncendido = true;
+	bool teclaPPresionada = false;
+
 
 
 	// BUCLE PRINCIPAL
@@ -400,8 +407,11 @@ int main() {
 
 
 		glfwPollEvents();
+		//Camara anterior
 		camera.keyControl(mainWindow.getsKeys(), deltaTime);
 		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+
 
 		// =======================================================
 		// CONTROLES DE LUCES (TECLADO)
@@ -429,23 +439,47 @@ int main() {
 			pointLights[0] = PointLight(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, posFarola.x + 2.4f, posFarola.y + 7.6f, posFarola.z - 2.4f, 5.0f, 0.05f, 0.012f);
 		}
 
+		// =======================================================
+		// Botón OFF/ON para el Faro (Tecla P)
+		// =======================================================
+		if (mainWindow.getsKeys()[GLFW_KEY_P]) {
+			if (!teclaPPresionada) {
+				faroEncendido = !faroEncendido; // Cambia el estado
+				teclaPPresionada = true;
+			}
+		}
+		else {
+			teclaPPresionada = false;
+		}
+
+		// Actualizamos la luz del Faro (PointLight 1) en cada fotograma
+		if (faroEncendido) {
+			// INTENSO: Ambiental a 1.0f, Difusa a 15.0f, y Exponencial bajísimo (0.0001f) para que llegue al piso
+			pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
+				1.0f, 15.0f,
+				-235.0f, 50.0f, 0.0f,
+				1.0f, 0.002f, 0.0001f);
+		}
+		else {
+			// APAGADO: Multiplicadores de luz en 0.0f
+			pointLights[1] = PointLight(1.0f, 0.95f, 0.8f,
+				0.0f, 0.0f,
+				-235.0f, 50.0f, 0.0f,
+				1.0f, 0.002f, 0.0001f);
+		}
 		//ANIMACIONES BASICAS:
 		
 		
 
-		/// =======================================================
-		// Control del Engranaje (Tecla G)
 		// =======================================================
+		// Control del Engranaje (G Inicia / H Detiene)
+		// =======================================================
+
+		// Tecla G: INICIAR
 		if (mainWindow.getsKeys()[GLFW_KEY_G]) {
 			if (!teclaGPresionada) {
-				animacionGearActiva = !animacionGearActiva; // Activa/Desactiva
-
-				// ¡EL TRUCO! Sincronizamos el reloj exactamente al momento de encenderlo
-				// para que no intente dar giros acumulados del pasado.
-				if (animacionGearActiva) {
-					tiempoUltimoPaso = now;
-				}
-
+				animacionGearActiva = true;
+				tiempoUltimoPaso = now; // Sincronizamos el reloj para que no se vuelva loco
 				teclaGPresionada = true;
 			}
 		}
@@ -453,19 +487,28 @@ int main() {
 			teclaGPresionada = false;
 		}
 
-		// Lógica del "Tick" Mecánico
+		// Tecla H: DETENER
+		if (mainWindow.getsKeys()[GLFW_KEY_H]) {
+			if (!teclaHPresionada) {
+				animacionGearActiva = false;
+				teclaHPresionada = true;
+			}
+		}
+		else {
+			teclaHPresionada = false;
+		}
+
+		// Lógica del "Tik-Tak"
 		if (animacionGearActiva) {
-			// Intervalo exacto de 1.0 segundo de espera
-			if (now - tiempoUltimoPaso > 1.0f) {
-				rotGearObjetivo += 30.0f; // Avanza 30 grados en cada tick
-				tiempoUltimoPaso = now;   // Reiniciamos el reloj para el siguiente segundo
+			// Se espera exactamente 1.5 segundos
+			if (now - tiempoUltimoPaso > 1.5f) {
+				rotGearObjetivo += 45.0f; // Los grados que avanza en cada "Tak"
+				tiempoUltimoPaso = now;   // Reinicia el reloj
 			}
 		}
 
-		// El multiplicador en 2.0f hace que el movimiento sea súper pesado, lento y robusto
-		rotGearActual += (rotGearObjetivo - rotGearActual) * 2.0f * deltaTime;
-		
-
+		// El movimiento físico: le bajé la velocidad a 1.5f para que el "tirón" sea lento y muy pesado
+		rotGearActual += (rotGearObjetivo - rotGearActual) * 1.5f * deltaTime;
 		
 
 		//ANIMACIONES COMPLEJAS:
@@ -703,10 +746,11 @@ int main() {
 		Torre_Reloj.RenderModel();
 
 		model = glm::mat4(1.0);
-		// El engranaje y reloj principal los pongo cerca de la torre
 		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-		// APLICAMOS LA ROTACIÓN EN EL EJE Y
+
+		// APLICAMOS LA ROTACIÓN EN Y
 		model = glm::rotate(model, glm::radians(rotGearActual), glm::vec3(0.0f, 1.0f, 0.0f));
+
 		model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Gear1.RenderModel();
