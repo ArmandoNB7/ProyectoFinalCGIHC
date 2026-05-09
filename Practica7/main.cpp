@@ -48,6 +48,7 @@ Texture pisoTexture;
 // Modelos Base
 Model Mi_lamparita;
 Model Pasto;
+Model Arbol;
 // === MODELOS DEL PROYECTO FINAL ===
 // Alicia
 Model Casa_Alicia, Comedor_Alicia, Puerta_Alicia, Taza_Alicia, Hongo, Sombrero;
@@ -279,6 +280,10 @@ int main() {
 	//bmo adventure
 	bmo = Model();
 	bmo.LoadModel("ModelosProject/bmo.obj");
+
+	//Arbol
+	Arbol = Model(); 
+	Arbol.LoadModel("ModelosProject/arbolito.obj");
 	
 	
 	
@@ -451,7 +456,7 @@ int main() {
 		////////////////////////////////////////////
 		caminando = false;
 		//se ajusta la velocidad
-		float velocidadCaminar = 0.5f * deltaTime;
+		float velocidadCaminar = 1.0f * deltaTime;
 		float velocidadGiro = 1.2f * deltaTime;
 		// Flecha ARRIBA: Avanzar
 		if (mainWindow.getsKeys()[GLFW_KEY_UP]) {
@@ -1007,7 +1012,7 @@ int main() {
 
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(120.0f, 0.0f, -120.0f));
+		model = glm::translate(model, glm::vec3(-100.0f, 0.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Torre_Agua.RenderModel();
@@ -1054,6 +1059,37 @@ int main() {
 
 
 
+
+
+		//ARBOLES izquierdo
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-255.0f, -7.0f, 255.0f));
+		model = glm::scale(model, glm::vec3(20.0f, 20.0f, 20.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arbol.RenderModel();
+		//ARBOLES TRASERO IZQ
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-255.0f, -7.0f, -255.0f));
+		model = glm::scale(model, glm::vec3(15.0f, 15.0f, 15.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arbol.RenderModel();
+
+		//ARBOLES TRASERO DERECHO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(255.0f, -.0f, -255.0f));
+		model = glm::scale(model, glm::vec3(10.0f, 10.0f, 10.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arbol.RenderModel();
+
+		//ARBOLES TRASERO DERECHO
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(255.0f, -7.0f, -255.0f));
+		model = glm::scale(model, glm::vec3(12.0f, 12.0f, 12.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Arbol.RenderModel();
+
+
+
 		//YA arregle 
 		// =========================================================
 		// ZONA 3: HORA DE AVENTURA & EXTRAS (Esquina X-, Z+)
@@ -1065,7 +1101,16 @@ int main() {
 		Pico_Helado.RenderModel();
 
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(55.0f, -1.0f, 55.0f)); // La banca cerquita del centro
+		model = glm::translate(model, glm::vec3(30.0f, -1.0f, 220.0f)); 
+		model = glm::rotate(model, glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Banca.RenderModel();
+
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-30.0f, -1.0f, 220.0f)); 
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Banca.RenderModel();
 
@@ -1203,9 +1248,9 @@ int main() {
 		// NPC MACHINARIUM
 		////////////////////////////////////////////
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(40.0f, -1.0f, -120.0f));
-		model = glm::rotate(model, 90.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, -150.0f));
+		model = glm::rotate(model, 180.0f * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.7f, 0.75f, 0.75f));
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		npcMachinarium.RenderModel();
@@ -1263,6 +1308,39 @@ int main() {
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_brillante.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		carro_tren.RenderModel();
+
+		////////////////////////////////////////////////////////////
+		// LOCOMOTORA Y HUMITO
+		////////////////////////////////////////////////////////
+		// locomotora
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(140.0f, -1.0f, -90.0f));
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		locomotora.RenderModel();
+
+		//// dibujar humito
+		// --- ANIMACIÓN BÁSICA DEL HUMO (MEJORADA) ---
+		// 2. DIBUJAR HUMITO (¡Ahora sí va a funcionar!)
+		if (locoActiva) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			model = glm::mat4(1.0);
+			// Posición: La locomotora está en 140, el humo sale de su chimenea
+			model = glm::translate(model, glm::vec3(140.0f, 80.0f + movHumoY, -52.0f));
+
+			// Rotación: Hacemos que el humo gire un poco mientras sube (Animación Simple)
+			model = glm::rotate(model, (movHumoY * 50.0f) * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			model = glm::scale(model, glm::vec3(escalaHumo+20.0f, escalaHumo+25.0f, escalaHumo+20.0f));
+			
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			texturaHumo.UseTexture();
+			planoHumo.RenderModel();
+			}
+			glDisable(GL_BLEND);
 
 
 		// =======================================================
@@ -1333,40 +1411,6 @@ int main() {
 
 			if (mainWindow.getsKeys()[GLFW_KEY_A]) cam3X -= velMapa;
 			if (mainWindow.getsKeys()[GLFW_KEY_D]) cam3X += velMapa;
-
-		////////////////////////////////////////////////////////////
-		// LOCOMOTORA Y HUMITO
-		////////////////////////////////////////////////////////
-		// loco
-		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(140.0f, -1.0f, -90.0f)); 
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); 
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
-		locomotora.RenderModel();
-
-		//// dibujar humito
-		// --- ANIMACIÓN BÁSICA DEL HUMO (MEJORADA) ---
-		// 2. DIBUJAR HUMITO (¡Ahora sí va a funcionar!)
-		if (locoActiva) {
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			model = glm::mat4(1.0);
-			// Posición: La locomotora está en 140, el humo sale de su chimenea
-			model = glm::translate(model, glm::vec3(140.0f, 5.0f + movHumoY, -180.0f));
-
-			// Rotación: Hacemos que el humo gire un poco mientras sube (Animación Simple)
-			model = glm::rotate(model, (movHumoY * 50.0f) * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-
-			model = glm::scale(model, glm::vec3(escalaHumo, escalaHumo, escalaHumo));
-
-			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-			texturaHumo.UseTexture();
-			planoHumo.RenderModel();
-
-			glDisable(GL_BLEND);
-		}
 			if (mainWindow.getsKeys()[GLFW_KEY_W]) cam3Z -= velMapa;
 			if (mainWindow.getsKeys()[GLFW_KEY_S]) cam3Z += velMapa;
 
