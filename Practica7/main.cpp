@@ -80,6 +80,10 @@ Model zeppelin;
 Model aspas;
 //Trenecito
 Model via_tren, carro_tren;
+//Locomotora
+Model locomotora;
+Model planoHumo;
+Texture texturaHumo;
 
 
 Skybox skybox;
@@ -117,6 +121,12 @@ float rotAspas = 0.0f;
 float movCarrito = 0.0f;   
 static bool trenActivo = false;
 static bool teclaTPresionada = false;
+
+//PARA LA LOCOMOTORA
+float movHumoY = 0.0f;    
+float escalaHumo = 1.0f;   
+static bool locoActiva = false;
+static bool teclaLPresionada = false;
 
 
 
@@ -247,6 +257,15 @@ int main() {
 	via_tren.LoadModel("ModelosProject/via_tren.obj");
 	carro_tren = Model();
 	carro_tren.LoadModel("ModelosProject/carro_tren.obj");
+	// Locomotora
+	locomotora = Model();
+	locomotora.LoadModel("ModelosProject/locomotora.obj");
+
+	// Humo 
+	planoHumo = Model();
+	planoHumo.LoadModel("ModelosProject/plano.obj"); 
+	texturaHumo = Texture("TexturasProject/humote.png");
+	texturaHumo.LoadTextureA(); 
 
 	// Temática Hora de Aventura & Extras
 	Pico_Helado = Model();     Pico_Helado.LoadModel("ModelosProject/PicoHelado.obj");
@@ -551,13 +570,33 @@ int main() {
 			teclaTPresionada = false;
 		}
 
-		// El movimiento físico: le bajé la velocidad a 1.5f para que el "tirón" sea lento y muy pesado
 		rotGearActual += (rotGearObjetivo - rotGearActual) * 1.5f * deltaTime;
 		if (trenActivo) {
 			movCarrito += 15.0f * deltaTime; 
 			if (movCarrito > 150.0f) movCarrito = -150.0f; 
 		}
 		
+		// LOCOMOTORA (LETRA L)
+		if (mainWindow.getsKeys()[GLFW_KEY_L]) {
+			if (!teclaLPresionada) {
+				locoActiva = !locoActiva;
+				teclaLPresionada = true;
+			}
+		}
+		else {
+			teclaLPresionada = false;
+		}
+
+		//animacion humo
+		if (locoActiva) {
+			movHumoY += 2.0f * deltaTime;    
+			escalaHumo += 1.5f * deltaTime; 
+
+			if (movHumoY > 12.0f) { 
+				movHumoY = 0.0f;
+				escalaHumo = 1.0f;
+			}
+		}
 
 		//ANIMACIONES COMPLEJAS:
 		// 
@@ -1087,11 +1126,15 @@ int main() {
 		///////////////////////////////////////////////////////////////////
 		// vias
 		model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0f, 1.5f, -190.0f)); 
+		model = glm::translate(model, glm::vec3(40.0f, 1.5f, -190.0f)); 
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
 		via_tren.RenderModel();
-
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(-90.0f, 1.5f, -190.0f));
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		via_tren.RenderModel();
 		// carrito
 		model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(movCarrito, 1.7f, -192.0f));
@@ -1100,6 +1143,39 @@ int main() {
 		carro_tren.RenderModel();
 
 
+		////////////////////////////////////////////////////////////
+		// LOCOMOTORA Y HUMITO
+		////////////////////////////////////////////////////////
+		// loco
+		model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(140.0f, -1.0f, -90.0f)); 
+		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); 
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		Material_opaco.UseMaterial(uniformSpecularIntensity, uniformShininess);
+		locomotora.RenderModel();
+
+		//// dibujar humito
+		// --- ANIMACIÓN BÁSICA DEL HUMO (MEJORADA) ---
+		// 2. DIBUJAR HUMITO (¡Ahora sí va a funcionar!)
+		if (locoActiva) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			model = glm::mat4(1.0);
+			// Posición: La locomotora está en 140, el humo sale de su chimenea
+			model = glm::translate(model, glm::vec3(140.0f, 5.0f + movHumoY, -180.0f));
+
+			// Rotación: Hacemos que el humo gire un poco mientras sube (Animación Simple)
+			model = glm::rotate(model, (movHumoY * 50.0f) * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			model = glm::scale(model, glm::vec3(escalaHumo, escalaHumo, escalaHumo));
+
+			glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+			texturaHumo.UseTexture();
+			planoHumo.RenderModel();
+
+			glDisable(GL_BLEND);
+		}
 
 		glUseProgram(0);
 		mainWindow.swapBuffers();
